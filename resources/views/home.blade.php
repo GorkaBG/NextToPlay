@@ -4,12 +4,12 @@
             <x-forms.field type="email" name="email" label="Tu email" />
         </div>
 
-        @if( session('error') )
-        <p class="text-red-500 text-sm italic mb-4">Introduce un email correcto.</p>
+        @if ($errors->has('email'))
+            <p class="text-red-500 text-sm italic mb-4">Introduce un email válido.</p>
         @endif
         
         <div class="flex items-center justify-center">
-            <x-forms.button type="submit">¡Entrar!</x-forms.button>
+            <x-forms.button type="submit" data-test="btn-entrar">¡Entrar!</x-forms.button>
         </div>
     </x-forms.loginForm>
 

@@ -42,7 +42,7 @@ class AccessCodeNotification extends Notification implements ShouldQueue
             ->subject('Tu código de acceso temporal')
             ->greeting('¡Hola!')
             ->line('Este es el código temporal que debes introducir para acceder a Next To Play: ')
-            ->line(new HtmlString('<div style="padding:10px;text-align:center;font-size:22px;font-weight:700;background-color:#f0f2f5;border-radius:5px;margin-bottom:10px">'.$this->code.'</div>'))
+            ->line(new HtmlString('<div id="code" style="padding:10px;text-align:center;font-size:22px;font-weight:700;background-color:#f0f2f5;border-radius:5px;margin-bottom:10px">'.$this->code.'</div>'))
             ->salutation('¡Gracias por usar la aplicación!');
     }
 

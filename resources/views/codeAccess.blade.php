@@ -12,7 +12,7 @@
         </div>
         <x-forms.field type="hidden" name="email" value="{{ session('emailAttempt') }}" readonly  />        
 
-        @if( session('error') )
+        @if( session('error') || $errors->has('email') )
             <p class="text-red-500 text-sm italic mb-4">El código no es válido o ha caducado.</p>
         @endif
         

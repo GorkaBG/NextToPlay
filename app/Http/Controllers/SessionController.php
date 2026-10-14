@@ -35,7 +35,7 @@ class SessionController extends Controller
             'code' => ['required', 'numeric', 'min_digits:4', 'max_digits:4'],
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->firstOrFail();
 
         if(Hash::check($request->code, $user->code)
             && $user->code_created_at->gt(now()->subMinutes(5)) ){
