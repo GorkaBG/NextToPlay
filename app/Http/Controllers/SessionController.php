@@ -82,6 +82,7 @@ class SessionController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        Auth::logout();
+        return redirect()->route('login');
     }
 }
