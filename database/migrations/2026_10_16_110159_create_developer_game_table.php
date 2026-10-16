@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('developer_game', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Game::class);
-            $table->foreignIdFor(Developer::class);
+            $table->foreignIdFor(Game::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Developer::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

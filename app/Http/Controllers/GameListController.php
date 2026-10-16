@@ -104,7 +104,26 @@ class GameListController extends Controller
 
         }
 
-        //guardar en game_user, tabla de datos de los juegos de un usuario
+        //guardar en game_user, tabla de datos de los juegos de un usuario        
+
+        //guarda las plataformas que no existan
+        $platforms = [];            
+        if(!empty($game_data[0]['platforms'])){
+            
+            foreach($game_data[0]['platforms'] as $platform){                            
+                $plat = Platform::where ('',$company['company']['id'])->first(); 
+                    
+                if( $dev === null ){
+                    $dev = Developer::create([
+                            'igdb_id' => $company['company']['id'],
+                            'name' => $company['company']['name'],
+                        ]);
+                    }
+                    $developers[] = $dev->id;    
+                }                    
+            }
+        }
+
 
         return to_route('games.list');
     }

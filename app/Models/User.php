@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Models\GameGroup;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use App\Models\GameGroup;
+use App\Models\GameUser;
 
 #[Fillable(['name', 'email','code', 'code_created_at'])]
 //#[Hidden(['password', 'remember_token'])]
@@ -36,5 +36,9 @@ class User extends Authenticatable
     public function gameGroups (): HasMany
     {
         return $this->hasMany(GameGroup::class);
+    }
+    public function userGames(): HasMany
+    {
+        return $this->hasManu(GameUser::class);
     }
 }

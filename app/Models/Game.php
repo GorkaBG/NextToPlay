@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Developer;
+use App\Models\GameUser;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

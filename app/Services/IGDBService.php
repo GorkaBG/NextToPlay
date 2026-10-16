@@ -79,6 +79,7 @@ class IGDBService
                     involved_companies.developer,
                     involved_companies.company.name,
                     first_release_date,
+                    platforms,
                     total_rating,
                     total_rating_count;
                 where  
