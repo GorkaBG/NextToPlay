@@ -1,12 +1,11 @@
 <?php
-
-namespace App\Http\Controllers;
+namespace App\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\JsonResponse;
 
-class IGDBController extends Controller
+class IGDBService
 {
     private string $token;
 
@@ -33,7 +32,7 @@ class IGDBController extends Controller
 
     }
 
-    public function search(Request $request): ?JsonResponse
+    public function search(Request $request)/*: ?JsonResponse*/
     {
         $request->validate([
             'name' => ['required', 'string', 'min:4']
@@ -55,7 +54,8 @@ class IGDBController extends Controller
                     & platforms != (52,55,34,39) 
                     & involved_companies.developer = true 
                     & first_release_date!= null;
-limit 9;';
+                sort total_rating_count desc; 
+                limit 9;';
 
         $headers = [
             'Client-ID' => env('IGDB_CLIENT'),
@@ -71,11 +71,11 @@ limit 9;';
 
     }
 
-    static function game(int $game_id): ?JsonResponse
+    public function game(int $game_id)/*: ?JsonResponse*/
     {
         $body = 'fields 
                     name, 
-                    cover.url, 
+                    cover.image_id, 
                     involved_companies.developer,
                     involved_companies.company.name,
                     first_release_date,
@@ -83,7 +83,7 @@ limit 9;';
                     total_rating_count;
                 where  
                     id = '.$game_id.';
-l               ';
+                ';
 
         $headers = [
             'Client-ID' => env('IGDB_CLIENT'),
@@ -93,7 +93,6 @@ l               ';
         $response = Http::withHeaders($headers)
         ->withBody($body, 'text/plain')
         ->post('https://api.igdb.com/v4/games');
-        
         
         return $response->successful() ? $response->json() : [];
     }

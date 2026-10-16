@@ -1,14 +1,14 @@
 <x-layout>
     <div class="flex flex-col space-y-4 max-w-xl">
-        <form action="{{ route('IGDB.search', $group) }}" method="POST">
-            @csrf;
+        <form action="{{ route('IGDB.search', $group->id) }}" method="POST">
+            @csrf
             <x-forms.field label="Búsqueda" name="name"/>   
             <x-forms.button type="submit">Buscar</x-forms.buttom>         
         </form>
         @if (isset($games))
-        <form action="{{ route('games.store', $group) }}" class="space-x-5">
-            @csrf;
-            <x-forms.field type="hidden" name="group" />
+        <form action="{{ route('games.store') }}" class="space-x-5" method="POST">
+            @csrf
+            <x-forms.field type="hidden" name="group" value="{{ $group->id }}"/>
             <ul class="list bg-base-100 rounded-box shadow-md">
             @foreach($games as $game)
                 <li class="list-row">

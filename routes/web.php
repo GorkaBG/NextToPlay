@@ -6,7 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\GameListController;
 use App\Http\Controllers\GameGroupController;
-use App\Http\Controllers\IGDBController;
+use App\Services\IGDBService;
 use App\Models\GameGroup;
 
 Route::view('/', 'home')->name('login')->middleware('guest');
@@ -21,7 +21,7 @@ Route::get('/games', [GameListController::class, 'index'])->name('games.list')->
 Route::get('/games/new/{group}', [GameListController::class,'create'])->name('games.new')->middleware('auth');
 Route::post('/games/new', [GameListController::class, 'store'])->name('games.store')->middleware('auth');
 Route::post('/games/new/{group}', function(Request $request, GameGroup $group){
-    $igdb = new IGDBController();
+    $igdb = new IGDBService();
     $games = $igdb->search($request);
     return view( 'games.create', [
                     'games' => $games,

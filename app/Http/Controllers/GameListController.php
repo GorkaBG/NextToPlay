@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\File;
+use Illuminate\Support\Facades\Storage;
 use App\Models\GameGroup;
-use App\Http\Controllers\IGDBController;
+use App\Models\Game;
+use App\Models\Developer;
+use App\Services\IGDBService;
 
 class GameListController extends Controller
 {
@@ -37,25 +42,71 @@ class GameListController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validation([
-            'game' => ['required', 'integer', 'max:6'],
-            'group' => ['required', 'integer', 'max:2'],
+        $request->validate([
+            'game' => ['required', 'integer', 'max_digits:6'],
+            'group' => ['required', 'integer', 'max_digits:2'],
         ]);
 
-        $game_data = IGDBController::game($request->game);
+        $game = Game::where('igdb_id', $request->game)->first();
 
-        $sacar el developer de $game_data['involved_companies']
+        //si no existe, se crea
+        if ( $game === null ){
+            $igdb = new IGDBService();
+            $game_data = $igdb->game($request->game);
+            
+            //Guardar Desarrolladores
+            $developers = [];
+            
+            if(!empty($game_data[0]['involved_companies'])){
+                
+                foreach($game_data[0]['involved_companies'] as $company){
+                    //separa los desarrolladores del resto de compañías implicadas
+                    if($company['developer']){   
+                                
+                        $dev = Developer::where ('igdb_id',$company['company']['id'])->first(); 
+                        
+                        if( $dev === null ){
+                            $dev = Developer::create([
+                                'igdb_id' => $company['company']['id'],
+                                'name' => $company['company']['name'],
+                            ]);
+                        }
+                        $developers[] = $dev->id;    
+                    }                    
+                }
+            }
+            
+            //guardar imagen
+            
+            $image_path = "";
+            if( isset($game_data[0]['cover']['image_id']) ){
+                $image = $game_data[0]['cover']['image_id'].'.jpg';
+                $response = Http::get( 'https://images.igdb.com/igdb/image/upload/t_cover_big/'.$image );
+                
+                if($response->successful()){                    
+                    if( Storage::disk('public')->put('covers/'.$image, $response->body()) ){
+                        $image_path = 'covers/'.$image;
+                    }
+                }
+            }
 
-        $guardar imagen y sacar path
+            //guardar juego
+            $game = Game::create([
+                'igdb_id' => $game_data[0]['id'],
+                'name' => $game_data[0]['name'],         
+                'cover' => $image_path,
+                'release_date' => $game_data[0]['first_release_date'],
+                'total_rating' => round( $game_data[0]['total_rating'],1 ),
+                'total_rating_count' => $game_data[0]['total_rating_count'],
+            ]);
 
-        $game = Game::create([
-            'igdb_id' => $game_data['id'],
-            'name' => $game_data['name'],
-            'developer' => $developer,            
-            'cover' => $path,
-            'rating' => $game_data['total_rating'],
-            'rating_count' => $game_data['total_rating_count'],
-        ]);
+            $game->developers()->attach($developers);
+
+        }
+
+        //guardar en game_user, tabla de datos de los juegos de un usuario
+
+        return to_route('games.list');
     }
 
     /**
