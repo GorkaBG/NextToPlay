@@ -6,9 +6,33 @@
     @else
         <div class="flex max-w-[1500px] m-auto space-x-5 grid-cols-3">
             @foreach($groups as $group)
-                <div class="w-1/3 text-center">
-                    {{ $group->groupname }}<br>
+                <div class="text-center w-1/3 text-center">
+                    <div class="flex text-center w-full">
+                        <x-icon name="{{ $group->icon }}" class="size-5" /> {{ $group->groupname }}<br>
+                    </div>
 
+                    <div>
+                        <ul class="list bg-base-100">
+                        @foreach($userGames as $userGame)
+                            @if ($userGame->game_group_id == $group->id)
+                                <li class="list-row mb-5 rounded-box shadow-md" style="background-image: url( {{ asset('storage') .'/'. $userGame->game->cover }} ); background-position: center;background-size:cover;background-color: rgba(255,255,255,0.8);background-blend-mode: lighten;">
+                                    <div>
+                                        <img src="{{ asset('storage') .'/'. $userGame->game->cover }}" alt="{{ $userGame->game->name }}"  class="size-10 rounded-box">
+                                    </div>
+                                    <div>
+                                        {{ $userGame->game->name }}
+                                    </div>
+                                    <div class="text-xs uppercase font-semibold opacity-60">
+                                        @foreach($userGame->game->developers as $developer)
+                                                {{ $developer['name'] }}
+                                            
+                                        @endforeach
+                                    </div>
+                                </li>
+                            @endif
+                        @endforeach
+                        </ul>
+                    </div>
                     <a href="{{ route('games.new', $group->id) }}" class="btn mt-3" data-test="crear-juego-{{ $group->id }}">
                         <x-icon name="heroicon-o-plus-circle" class="size-5" />
                         Añadir juego

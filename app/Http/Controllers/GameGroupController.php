@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\GameGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+use Illuminate\Database\Query\Builder;
 
 class GameGroupController extends Controller
 {
@@ -29,18 +31,19 @@ class GameGroupController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validation([
+        $request->validate([
             'name' => [
                 'required',
                 'string', 
                 'min:5', 
                 'max:50', 
-                Rule::unique('game_groups')->where( fn(Builder $query) => $query->where('user_id', Auth::id ) )],
+                Rule::unique('game_groups')->where( fn(Builder $query) => $query->where('user_id', Auth::id() ) )],
             'color' => ['required', 'string', 'hex_color'],
             'icon' => ['required', 'string', 'starts_with:heroicon'],
         ]);
 
-        $order = GameGroup::where('user_id', Auth::id())->orderBy('order','DESC')->first()->order + 1;
+        $userLastGroup = GameGroup::where('user_id', Auth::id())->orderBy('order','DESC')->first();
+        $order = (( ! empty($userLastGroup) )? $userLastGroup->order + 1 : 1 );
 
         GameGroup::create([
             'user_id' => Auth::id(),

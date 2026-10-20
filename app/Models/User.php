@@ -33,12 +33,16 @@ class User extends Authenticatable
         ];
     }
 
+    protected $attributes = [
+        'theme' => 'dark'
+    ];
+
     public function gameGroups (): HasMany
     {
         return $this->hasMany(GameGroup::class);
     }
     public function userGames(): HasMany
     {
-        return $this->hasManu(GameUser::class);
+        return $this->hasMany(GameUser::class);
     }
 }

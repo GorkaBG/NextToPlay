@@ -43,7 +43,8 @@ class IGDBService
                     cover.url, 
                     involved_companies.developer,
                     involved_companies.company.name,
-                    first_release_date;
+                    first_release_date,
+                    platforms.name;
                 where  
                     ( name ~ "'.$request->name.'"* | name ~ *" '.$request->name.'"* ) 
                     & game_type = (0, 2, 4) 
@@ -79,7 +80,7 @@ class IGDBService
                     involved_companies.developer,
                     involved_companies.company.name,
                     first_release_date,
-                    platforms,
+                    platforms.name,
                     total_rating,
                     total_rating_count;
                 where  

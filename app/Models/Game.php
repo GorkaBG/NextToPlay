@@ -19,8 +19,16 @@ class Game extends Model
         'total_rating_count'
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'release_date' => 'datetime',            
+        ];
+    }
+
     public function developers(): BelongsToMany
     {
         return $this->belongsToMany(Developer::class);
     }
+
 }

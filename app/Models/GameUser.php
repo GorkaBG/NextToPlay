@@ -15,7 +15,7 @@ class GameUser extends Model
     protected $fillable = [
         'user_id',
         'game_id',
-        'gamegroup_id',
+        'game_group_id',
         'custom_title',
         'custom_cover',
         'finished',
@@ -27,7 +27,7 @@ class GameUser extends Model
         'position' =>1,
     ];
 
-    public function patforms(): BelongsToMany
+    public function platforms(): BelongsToMany
     {
         return $this->belongsToMany(Platform::class, 'game_user_platform');
     }

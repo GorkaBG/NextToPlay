@@ -1,7 +1,7 @@
 <x-layout>
 Creación de nuevo grupo
 
-<form action="{{ route('groups.store', $) }}" method="POST" class="max-w-xl">
+<form action="{{ route('groups.store') }}" method="POST" class="max-w-xl">
     <x-forms.field name="name" label="nombre" required/>
     <x-forms.field name="color" type="color" label="Selecciona un color" />
     
