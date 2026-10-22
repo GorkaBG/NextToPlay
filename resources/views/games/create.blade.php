@@ -16,19 +16,23 @@
                     <label class="list-row  w-full">
                         
                         <input type="radio" name="game" value="{{ $game['id'] }}" required />
+                        @if ( ! empty($game['cover']))
                         <div>
                             <img class="size-15 rounded-box" alt="{{ $game['name'] }}" src="{{ $game['cover']['url']}}"/>
                         </div>
+                        @endif
                         <div class="flex flex-col justify-between ">
-                            <div>{{ $game['name'] }} ({{ Carbon\Carbon::createFromTimestamp($game['first_release_date'])->format('Y') }})</div>
+                            <div>{{ $game['name'] ?? 'desconocido' }} ({{ Carbon\Carbon::createFromTimestamp($game['first_release_date'])->format('Y') }})</div>
                             
+                            @if( !empty($game['involved_companies']))
                             <div class="text-xs uppercase font-semibold opacity-60">
                                 @foreach($game['involved_companies'] as $company)
                                     @if($company['developer'])
-                                        {{ $company['company']['name'] }}
+                                        {{ $company['company']['name'] ?? ''}}
                                     @endif
                                 @endforeach
                             </div>
+                            @endif
                         </div>                    
                         
                     </label>

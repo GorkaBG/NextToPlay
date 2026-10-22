@@ -1,6 +1,6 @@
 <x-layout>
-    <x-forms.loginForm action="{{ route('index.store') }}">  
-        <div class="mb-4 mt-4">
+    <x-forms.loginForm action="{{ route('index.store') }}" >  
+        <div class="mb-4 mt-4 text-primary-content">
             <x-forms.field type="email" name="email" label="Tu email" />
         </div>
 

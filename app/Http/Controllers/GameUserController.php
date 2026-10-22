@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\GameUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+use App\Models\GameGroup;
+use App\Services\IGDBService;
+use App\Actions\SaveUserGame;
 
 class GameUserController extends Controller
 {
@@ -28,7 +33,21 @@ class GameUserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //hacer esto con politica        
+        if ( GameGroup::find($request->group)->user_id != Auth::id()){
+            return back()->with('error', 'No tienes permiso para hacer esto');;
+        }
+
+        $request->validate([
+            'game' => ['required', 'integer', 'max_digits:6'],
+            'group' => ['required', 'integer', 'max_digits:2'],
+            'platforms' => ['required', 'array'],
+        ]);
+    
+        if( (new SaveUserGame)->handle($request) ) 
+            return to_route('games.list')->with('success', 'Juego añadido al listado');
+        else
+            return to_route('games.list')->with('error', 'Ocurrió un problema');
     }
 
     /**
@@ -59,7 +78,32 @@ class GameUserController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(GameUser $gameUser)
+    {      
+        //hacer esto con politica  
+        if($gameUser->user_id != Auth::id()){
+            return to_route('games.list')->with('error', 'Ocurrió un error');        
+        }
+
+        $gameUser->delete();
+        return to_route('games.list')->with('success', 'Juego eliminado correctamente');        
+    }
+
+    public function toggleFinished(Request $request)
     {
-        //
+        $request->validate([
+            'gameId' => ['integer','min-digits:1', 'max-digits:2'],
+        ]);
+
+        $gameUser = GameUser::find( $request->gameId );
+
+        if($gameUser->user_id != Auth::id()){
+            return to_route('games.list');
+        }
+
+        $gameUser->update([
+            'finished' => ! $gameUser->finished,
+        ]);
+        return to_route('games.list')->with('success', '¡Enhorabuena! Ahora... ¡A por el siguiente!');
+        
     }
 }

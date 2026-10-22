@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\GameGroup;
 use App\Models\GameUser;
 
-#[Fillable(['name', 'email','code', 'code_created_at'])]
+#[Fillable(['name', 'email','theme','code', 'code_created_at'])]
 //#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

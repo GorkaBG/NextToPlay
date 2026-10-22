@@ -39,7 +39,7 @@ class GameGroupController extends Controller
                 'max:50', 
                 Rule::unique('game_groups')->where( fn(Builder $query) => $query->where('user_id', Auth::id() ) )],
             'color' => ['required', 'string', 'hex_color'],
-            'icon' => ['required', 'string', 'starts_with:heroicon'],
+            'icon' => ['required', 'string', 'starts_with:heroicon,mdi'],
         ]);
 
         $userLastGroup = GameGroup::where('user_id', Auth::id())->orderBy('order','DESC')->first();
@@ -53,7 +53,7 @@ class GameGroupController extends Controller
             'order' => $order,
         ]);
 
-        return redirect()->route( 'games.list' );
+        return redirect()->route( 'games.list' )->with('success','El grupo se ha creado correctamente');
     }
 
     /**
@@ -85,6 +85,11 @@ class GameGroupController extends Controller
      */
     public function destroy(GameGroup $gameGroup)
     {
-        //
+        if($gameGroup->user_id != Auth::id()){
+            return route_to('games.list');
+        }
+
+        $gameGroup->delete();
+        return route_to('game.list')->with('success', 'Se ha eliminado el grupo y su contenido');
     }
 }

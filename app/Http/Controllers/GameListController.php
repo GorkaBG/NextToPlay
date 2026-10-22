@@ -4,17 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\File;
-use Illuminate\Support\Facades\Storage;
 use App\Models\GameGroup;
-use App\Models\GameUser;
-use App\Models\Game;
-use App\Models\Platform;
-use App\Models\Developer;
-use App\Services\IGDBService;
-use App\Actions\SaveUserGame;
 
 class GameListController extends Controller
 {
@@ -23,8 +13,8 @@ class GameListController extends Controller
      */
     public function index()
     {
-        $groups = Auth::user()->gameGroups()->latest()->get();
-        $userGames = Auth::user()->userGames()->get();
+        $groups = Auth::user()->gameGroups()->orderBy('order','Asc')->get();
+        $userGames = Auth::user()->userGames()->orderBy('finished','Asc')->orderBy('position','Asc')->get();
 
         return view('games.list', [
             'groups' => $groups,
@@ -52,21 +42,7 @@ class GameListController extends Controller
      */
     public function store(Request $request)
     {
-        //hacer esto con politica        
-        if ( GameGroup::find($request->group)->user_id != Auth::id()){
-            return back()->with('error', 'No tienes permiso para hacer esto');;
-        }
-
-        $request->validate([
-            'game' => ['required', 'integer', 'max_digits:6'],
-            'group' => ['required', 'integer', 'max_digits:2'],
-            'platforms' => ['required', 'array'],
-        ]);
-    
-        if( (new SaveUserGame)->handle($request) ) 
-            return to_route('games.list');
-        else
-            return to_route('games.list')->with('error', 'Ocurrió un problema');
+        
     }
 
     /**

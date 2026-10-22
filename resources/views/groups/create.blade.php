@@ -7,8 +7,8 @@ Creación de nuevo grupo
     
     
 <label>
-    <input type="radio" name="icon" value="heroicon-o-heart">
-    <x-icon name="heroicon-o-heart" class="size-8" />
+    <input type="radio" name="icon" value="mdi-gamepad">
+    <x-icon name="mdi-controller" class="size-8 text-secondary-content" />
 </label>
 
 <label>
