@@ -29,13 +29,16 @@ Route::post('/games/new/{group}', function(Request $request, GameGroup $group){
                     ] );
 } )->name('IGDB.search')->middleware('auth');
 
+//GRUPOS
+/*Route::get('/groups/new', [GameGroupController::class, 'create'])->name('groups.create')->middleware('auth');*/
+Route::post('/groups/new', [GameGroupController::class, 'store'])->name('groups.store')->middleware('auth');
+Route::patch('/groups/{gameGroup}', [GameGroupController::class, 'update'])->name('groups.update')->middleware('auth');
+Route::delete('/groups/{gameGroup}', [GameGroupController::class, 'destroy'])->name('groups.delete')->middleware('auth');
 
+//JUEGOS
 Route::post('/games/new', [GameUserController::class, 'store'])->name('games.store')->middleware('auth');
 Route::post('/games/toggle-finished', [GameUserController::class, 'toggleFinished'])->name('games.toggle.finished')->middleware('auth');
 Route::delete('/games/delete/{gameUser}', [GameUserController::class, 'destroy'])->name('games.delete')->middleware('auth');
-
-Route::get('/groups/new', [GameGroupController::class, 'create'])->name('groups.create')->middleware('auth');
-Route::post('/groups/new', [GameGroupController::class, 'store'])->name('groups.store')->middleware('auth');
 
 Route::post('/games/finished', function(){
     if( session('show_finished') ){
@@ -56,3 +59,66 @@ Route::post('/profile/theme', function(){
     }
     return back();
 })->name('toggle.theme');
+
+
+
+
+Route::get('/api/icons/search', function(Request $request, BladeUI\Icons\Factory $factory){
+
+$search = strtolower($request->get('q', ''));
+       $search = strtolower($request->get('q', ''));
+        $allIcons = [];
+
+        // Iteramos sobre el array de configuraciones de los sets instalados
+        foreach ($factory->all() as $set) {
+            $prefix = $set['prefix'] ?? '';
+            $paths = $set['paths'] ?? [];
+
+            if (empty($prefix) || empty($paths)) {
+                continue;
+            }
+
+            // Recorremos cada directorio físico asignado a este set de iconos
+            foreach ($paths as $path) {
+                if (!File::isDirectory($path)) {
+                    continue;
+                }
+
+                // Obtenemos todos los archivos .svg del directorio
+                $files = File::files($path);
+
+                foreach ($files as $file) {
+                    if ($file->getExtension() === 'svg') {
+                        // Nombre del archivo sin la extensión .svg
+                        $iconName = $file->getFilenameWithoutExtension();
+                        
+                        // Formamos el nombre completo: "prefix-nombre" (ej: heroicon-o-user)
+                        $fullName = $prefix . '-' . $iconName;
+
+                        // Filtramos si hay una búsqueda activa
+                        if (empty($search) || str_contains($fullName, $search)) {
+                            $allIcons[] = $fullName;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Ordenamos alfabéticamente y eliminamos posibles duplicados
+        $allIcons = array_unique($allIcons);
+        sort($allIcons);
+        // Limitamos el resultado (ej: 50 elementos) para mantener el rendimiento del buscador
+        return response()->json(array_slice($allIcons, 0, 42));
+
+})->name('icons.search');
+
+Route::get('/icons/svg', function(Request $request, BladeUI\Icons\Factory $factory){
+$name = $request->get('name');
+    try {
+        // SVG directo listo para inyectar con x-html
+        return response($factory->svg($name)->toHtml(), 200)
+                ->header('Content-Type', 'image/svg+xml');
+    } catch (\Exception $e) {
+        return response('', 404);
+    }
+})->name('icons.svg');

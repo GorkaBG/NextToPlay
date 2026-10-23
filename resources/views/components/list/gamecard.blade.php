@@ -29,10 +29,10 @@
             <x-icon name="mdi-drag-vertical" class="size-5" class="text-secondary-content"/>
         </div>
 
-        <div class="flex w-[19%] items-center {{ (($finished)?'grayscale ':'')}}">
-            <img src="{{ asset('storage') .'/'. $cover }}" alt="{{ $name }}"  class="w-full rounded-box">
+        <div class="flex w-[19%] items-center {{ (($finished)?'grayscale ':'')}} roundex-lg overflow-hidden">
+            <img src="{{ asset('storage') .'/'. $cover }}" alt="{{ $name }}"  class="w-full max-w-100 rounded-box">
         </div>
-        <div class="flex flex-col w-[53%] justify-between text-left py-4 px-3">
+        <div class="flex flex-col w-[53%] justify-between text-left py-3 px-3">
             <div class="title text-primary-content font-bold text-base">{{ $name }}</div>
 
             <div class="text-xs uppercase font-semibold opacity-60 text-secondary-content">

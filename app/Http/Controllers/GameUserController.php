@@ -103,7 +103,10 @@ class GameUserController extends Controller
         $gameUser->update([
             'finished' => ! $gameUser->finished,
         ]);
-        return to_route('games.list')->with('success', '¡Enhorabuena! Ahora... ¡A por el siguiente!');
+        if($gameUser->finished === true)
+            return to_route('games.list')->with('success', '¡Enhorabuena! Ahora... ¡A por el siguiente!');
+        else    
+            return to_route('games.list');
         
     }
 }

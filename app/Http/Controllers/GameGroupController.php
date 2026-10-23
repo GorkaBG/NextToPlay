@@ -77,7 +77,29 @@ class GameGroupController extends Controller
      */
     public function update(Request $request, GameGroup $gameGroup)
     {
-        //
+        
+        if($gameGroup->user_id != Auth::id()) 
+            return back();
+
+        $request->validate([
+            'name' => [
+                'required',
+                'string', 
+                'min:5', 
+                'max:50', 
+                Rule::unique('game_groups')->where( fn(Builder $query) => $query->where('user_id', Auth::id() ) )],
+            'color' => ['required', 'string', 'hex_color'],
+            'icon' => ['required', 'string', 'starts_with:heroicon,mdi'],
+        ]);
+        
+
+        $gameGroup->update([
+            'groupname' => $request->name,
+            'color' => $request->color,
+            'icon' => $request->icon,
+        ]);
+
+        return redirect()->route( 'games.list' )->with('success','El grupo se ha modificado correctamente');
     }
 
     /**
@@ -90,6 +112,6 @@ class GameGroupController extends Controller
         }
 
         $gameGroup->delete();
-        return route_to('game.list')->with('success', 'Se ha eliminado el grupo y su contenido');
+        return back()->with('success', 'Se ha eliminado el grupo y su contenido');
     }
 }

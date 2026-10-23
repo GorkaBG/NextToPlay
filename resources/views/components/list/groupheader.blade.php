@@ -19,8 +19,10 @@
             tabindex="-1"
             class="menu menu-xs dropdown-content bg-primary rounded-box z-1 w-42 shadow space-y-2 text-primary-content justify-center"
         >                                
-            <li class="flex inline-flex hover:text-secondary-content items-center">
+            <li class="flex inline-flex hover:text-secondary-content items-left">
                 <a 
+                    x-data
+                    @click="$dispatch('open-modal', {name: 'modal-group', title: 'Edita el grupo con tus preferencias', id: {{ $group_id }}, groupname: '{{ $groupname }}', color: '{{ $color }}', icon: '{{ $icon }}' })"
                     class="text-sm"
                 >
                     <x-icon name="mdi-pencil-outline" class="size-4"/>
@@ -30,7 +32,7 @@
             <li class="flex hover:text-secondary-content">  
                 <a 
                     x-data 
-                    @click="$dispatch('open-modal', {name: 'confirm-modal', id: {{ $group_id }} })" class="text-sm"
+                    @click="$dispatch('open-dialog', {name: 'confirm-dialog', id: {{ $group_id }} })" class="text-sm"
                 >
                     <x-icon name="mdi-trash-can-outline" class="size-4"/> Eliminar grupo
                 </a>

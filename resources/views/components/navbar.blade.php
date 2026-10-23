@@ -7,7 +7,14 @@
   </div>
 
   <div class="flex space-x-8">
-    <a href="{{ route('groups.create') }}" class="btn">Crear grupo</a>
+    <a 
+        x-data
+        @click="$dispatch('open-modal', {name: 'modal-group', title: 'Crea un nuevo grupo para tus juegos'})"
+        class="btn"
+        data-test="crear-grupo"
+    >
+        Crear grupo
+    </a>
     <div class="text-primary-content content-center text-sm">
         <form 
             action="{{ route('toggle.finished') }}" 

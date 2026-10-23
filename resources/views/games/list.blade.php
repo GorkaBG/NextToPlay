@@ -10,7 +10,7 @@
         </div>
     @endif
 
-    <x-dialog name="confirm-modal">
+    <x-dialog name="confirm-dialog">
         <p class="py-4">
             El grupo se eliminará de forma definitiva junto a su contenido.
             ¿Desea continuar?
@@ -21,8 +21,13 @@
                 @csrf
                 <button class="btn">Cancelar</button>
             </form>
-
-            <!--a :href="`/groups/${groupId}/delete`" class="btn border-0 bg-error text-error-content">Sí, elimínalo</a-->            
+            <form 
+                :action="`/groups/${itemId}`"
+                method="POST">
+                @csrf
+                @method('DELETE')                
+                <button type="submit" ref="`/groups/${itemId}/delete`" class="btn border-0 bg-error text-error-content">Sí, elimínalo</button>
+            </form>
         </div>
     </x-dialog>
 
@@ -32,57 +37,46 @@
         </x-alert>
     @endif   
 
+    
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const tarjetas = document.querySelectorAll('.gamecard');
-        const columnas = document.querySelectorAll('.group');
-        let tarjetaArrastrada = null;
-
-        // Configurar tarjetas (li)
-        tarjetas.forEach(tarjeta => {
-            tarjeta.addEventListener('dragstart', (e) => {
-                tarjetaArrastrada = tarjeta;
-                setTimeout(() => tarjeta.classList.add('opacity-50'), 0);
-            });
-
-            tarjeta.addEventListener('dragend', () => {
-                setTimeout(() => {
-                    tarjeta.classList.remove('opacity-50');
-                    tarjetaArrastrada = null;
-                }, 0);
-            });
-        });
-
-        // Configurar columnas (ul)
-        columnas.forEach(columna => {
-            columna.addEventListener('dragover', (e) => {
-                e.preventDefault(); // Permitir soltar
-            });
-
-            columna.addEventListener('dragenter', (e) => {
-                e.preventDefault();
-                columna.classList.add('bg-gray-300', 'rounded'); // Efecto visual al pasar por encima
-            });
-
-            columna.addEventListener('dragleave', () => {
-                columna.classList.remove('bg-gray-300');
-            });
-
-            columna.addEventListener('drop', () => {
-                columna.classList.remove('bg-gray-300');
-                if (tarjetaArrastrada) {
-                    // Mueve físicamente el <li> dentro del nuevo <ul> de forma visual
-                    columna.appendChild(tarjetaArrastrada);
-                    
-                    // Opcional: Aquí tienes el ID y el nuevo estado solo en el cliente
-                    const tarjetaId = tarjetaArrastrada.getAttribute('data-id');
-                    const nuevoEstado = columna.getAttribute('data-estado');
-                    console.log(`Tarjeta ${tarjetaId} movida a ${nuevoEstado}`);
+    <x-modal name="modal-group">   
+        <form 
+            x-data="{ action: '{{ route('groups.store') }}', editing: false }"
+            :action="action"
+            method="POST"  
+            @open-modal.window="
+                if ($event.detail.name === name){
+                    if($event.detail.id) {
+                        action = '/groups/'+$event.detail.id;                   
+                        editing = true;
+                    }   
                 }
-            });
-        });
-    });
-</script>
+            "
+            @close-modal.window="$el.reset();"
+            class="flex flex-col w-full space-y-2 text-secondary-content">
+            @csrf
+            <template x-if="editing">
+                <input type="hidden" name="_method" value="PATCH">
+            </template>
+            <x-forms.field name="name" label="Nombre del grupo" class="w-full" x-model="groupname" required/>
+
+            <x-forms.field name="color" type="color" label="Selecciona un color" class="max-w-2xl" required  x-model="color" />
+        
+            <x-forms.icon-selector name="icon" label="Selecciona un icono" x-model="icon" />
+
+            <div class="flex justify-between items-center pt-4">
+                <a class="text-primary-content font-bold cursor-pointer" @click="show = false;$dispatch('close-modal')">Cerrar</a>
+
+                <x-forms.button type="submit" data-test="btn-guardar-grupo">Guardar</x-forms.button>
+            </div>
+
+        </form>
+    </x-modal>
+
+
+
+</div>
+
+
 
 </x-layout>

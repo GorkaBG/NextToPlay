@@ -3,7 +3,7 @@
     'userGames',
 ])
 <div class=" flex flex-col flex-3 mb-10 bg-primary p-2 border border-secondary rounded-xl">
-    <x-list.groupheader group_id="{{ $group->id }}" color="{{ $group->color }}" icon="{{ $group->icon }}">
+    <x-list.groupheader group_id="{{ $group->id }}" groupname="{{ $group->groupname }}" color="{{ $group->color }}" icon="{{ $group->icon }}">
         {{ $group->groupname }}
     </x-list.groupheader>
     <div>
@@ -31,4 +31,13 @@
         <x-icon name="heroicon-o-plus-circle" class="size-5" />
         Añadir juego
     </a>
+    <a 
+        x-data
+        @click="$dispatch('open-modal', {name: 'new-game', id: {{ $group->id }} })"
+    class="flex mt-auto p-4 gap-2 justify-center border border-secondary border-dashed border-2 rounded-xl text-secondary-content text-sm font-bold" data-test="crear-juego-{{ $group->id }}">
+        <x-icon name="heroicon-o-plus-circle" class="size-5" />
+        Añadir juego
+    </a>
+
+    
 </div>
