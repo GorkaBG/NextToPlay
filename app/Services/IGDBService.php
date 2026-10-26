@@ -32,7 +32,43 @@ class IGDBService
 
     }
 
-    public function search(Request $request)/*: ?JsonResponse*/
+    public function search(String $search)/*: ?JsonResponse*/
+    {
+        $body = 'fields 
+                    name, 
+                    cover.url, 
+                    involved_companies.developer,
+                    involved_companies.company.name,
+                    first_release_date,
+                    platforms.name;
+                where  
+                    ( name ~ "'.$search.'"* | name ~ *" '.$search.'"* ) 
+                    & game_type = (0, 2, 4) 
+                    & game_status = null 
+                    & version_parent = null 
+                    & parent_game = null 
+                    & platforms!= null 
+                    & platforms != (52,55,34,39) 
+                    & involved_companies.developer = true 
+                    & first_release_date!= null;
+                sort total_rating_count desc; 
+                limit 9;';
+
+        $headers = [
+            'Client-ID' => env('IGDB_CLIENT'),
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json',
+        ];
+        $response = Http::withHeaders($headers)
+        ->withBody($body, 'text/plain')
+        ->post('https://api.igdb.com/v4/games');
+        
+        
+        return $response->successful() ? $response->json() : [];
+
+    }
+
+    public function search2(Request $request)/*: ?JsonResponse*/
     {
         $request->validate([
             'name' => ['required', 'string', 'min:4']

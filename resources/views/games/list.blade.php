@@ -58,6 +58,7 @@
             <template x-if="editing">
                 <input type="hidden" name="_method" value="PATCH">
             </template>
+
             <x-forms.field name="name" label="Nombre del grupo" class="w-full" x-model="groupname" required/>
 
             <x-forms.field name="color" type="color" label="Selecciona un color" class="max-w-2xl" required  x-model="color" />
@@ -73,7 +74,33 @@
         </form>
     </x-modal>
 
+    <x-modal name="modal-game">
+        <form 
+            action="{{ route('games.store') }}"
+            method="POST"  
+            x-data="{groupId: 0 }"
+            @open-modal.window="
+                if($event.detail.id)
+                    groupId=$event.detail.id;
+                else
+                    show=false;
+            "
+            @close-modal.window="$el.reset();"
+            class="flex flex-col w-full space-y-2 text-secondary-content">
+            @csrf
 
+            <input type="hidden" name="group" :value="groupId" />
+
+            <x-forms.game-selector name="game" label="Selecciona el juego" x-model="game" />
+
+            <div class="flex justify-between items-center pt-4">
+                <a class="text-primary-content font-bold cursor-pointer" @click="show = false;$dispatch('close-modal')">Cerrar</a>
+
+                <x-forms.button type="submit" data-test="btn-guardar-grupo">Guardar</x-forms.button>
+            </div>
+        </form>
+        
+    </x-modal> 
 
 </div>
 

@@ -27,17 +27,12 @@
         @endforeach
         </ul>
     </div>
-    <a href="{{ route('games.new', $group->id) }}" class="flex mt-auto p-4 gap-2 justify-center border border-secondary border-dashed border-2 rounded-xl text-secondary-content text-sm font-bold" data-test="crear-juego-{{ $group->id }}">
-        <x-icon name="heroicon-o-plus-circle" class="size-5" />
-        Añadir juego
-    </a>
+    
     <a 
         x-data
-        @click="$dispatch('open-modal', {name: 'new-game', id: {{ $group->id }} })"
-    class="flex mt-auto p-4 gap-2 justify-center border border-secondary border-dashed border-2 rounded-xl text-secondary-content text-sm font-bold" data-test="crear-juego-{{ $group->id }}">
+        @click="$dispatch('open-modal', {name: 'modal-game', title: 'Añade un nuevo juego al grupo', id: {{ $group->id }} })"
+    class="flex mt-auto p-4 gap-2 justify-center border border-secondary border-dashed border-2 rounded-xl text-secondary-content text-sm font-bold cursor-pointer" data-test="crear-juego-{{ $group->id }}">
         <x-icon name="heroicon-o-plus-circle" class="size-5" />
         Añadir juego
     </a>
-
-    
 </div>

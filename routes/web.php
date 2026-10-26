@@ -22,7 +22,7 @@ Route::get('/games', [GameListController::class, 'index'])->name('games.list')->
 Route::get('/games/new/{group}', [GameListController::class,'create'])->name('games.new')->middleware('auth');
 Route::post('/games/new/{group}', function(Request $request, GameGroup $group){
     $igdb = new IGDBService();
-    $games = $igdb->search($request);
+    $games = $igdb->search2($request);
     return view( 'games.create', [
                     'games' => $games,
                     'group' => $group,
@@ -60,8 +60,15 @@ Route::post('/profile/theme', function(){
     return back();
 })->name('toggle.theme');
 
+Route::get('/api/games/search', function(Request $request){
+    $request->validate([
+        'q' => ['required', 'string', 'min:4']
+    ]);
 
-
+    $igdb = new IGDBService();
+    $games = $igdb->search($request->q);
+    return response()->json($games);
+})->name('games.search');
 
 Route::get('/api/icons/search', function(Request $request, BladeUI\Icons\Factory $factory){
 

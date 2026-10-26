@@ -3,7 +3,7 @@
 ])
 
 <div 
-    x-data="{ show: false, name: '{{ $name }}', title: '', itemId: null, groupname: '', color: '', icon: ''}"
+    x-data="{ show: false, name: '{{ $name }}', title: '', itemId: null, groupname: '', color: '', icon: '', game: ''}"
     x-show="show"
     @open-modal.window="
         if ($event.detail.name === name){ 

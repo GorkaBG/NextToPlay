@@ -90,6 +90,11 @@
                     </form>
                 </li>
                 <li>
+                    <button type="submit" class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content">
+                        <x-icon name="mdi-pencil-circle-outline" class="size-4"/> Editar
+                    </button>
+                </li>
+                <li>
                     <form action="{{ route ('games.delete', $id) }}" method="POST" class="block w-full p-0">
                         @csrf
                         @method('DELETE')
