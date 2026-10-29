@@ -9,18 +9,20 @@
     <div>
         <ul class="list group">
         @foreach($userGames as $userGame)
-            @if ($userGame->game_group_id == $group->id &&
-                ($userGame->finished == false || session('show_finished') ))
+            @if ($userGame->game_group_id == $group->id )
                 <x-list.gamecard 
-                    :id="$userGame->id" 
+                    :id="$userGame->id"
+                    :igdb_id="$userGame->game->igdb_id" 
                     :cover="$userGame->game->cover"
-                    :name="((empty($userGame->custom_name))?$userGame->game->name:$userGame->custom_name)"
+                    :name="((empty($userGame->custom_title))?$userGame->game->name:$userGame->custom_title)"
                     :developers="$userGame->game->developers"
                     :platforms="$userGame->platforms"
                     :rating="$userGame->game->total_rating"
                     :rating_count="$userGame->game->total_rating_count"
                     :finished="$userGame->finished"
                     :first_release_date="$userGame->game->first_release_date"
+                    :game_id="$userGame->game_id"
+                    :show="$userGame->finished == false || session('show_finished')"
                     hltb=""  
                 />
             @endif
@@ -30,7 +32,7 @@
     
     <a 
         x-data
-        @click="$dispatch('open-modal', {name: 'modal-game', title: 'Añade un nuevo juego al grupo', id: {{ $group->id }} })"
+        @click="$dispatch('open-modal', {name: 'modal-game-new', title: 'Añade un nuevo juego al grupo', id: {{ $group->id }} })"
     class="flex mt-auto p-4 gap-2 justify-center border border-secondary border-dashed border-2 rounded-xl text-secondary-content text-sm font-bold cursor-pointer" data-test="crear-juego-{{ $group->id }}">
         <x-icon name="heroicon-o-plus-circle" class="size-5" />
         Añadir juego

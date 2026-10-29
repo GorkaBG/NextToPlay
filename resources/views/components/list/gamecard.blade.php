@@ -1,5 +1,7 @@
 @props([
     'id',
+    'game_id',
+    'igdb_id',
     'cover' => null,
     'name',
     'developers' => [],
@@ -8,11 +10,14 @@
     'rating_count' => null,
     'finished' => false,
     'first_release_date' => null,
+    'show' => true,
     'hltb' => null,
 ])
 <li 
+    x-init="gamelist.push({{ $igdb_id }}); "
+    x-show="{{ (($show === true)?'true':'false') }}"
     class=" gamecard mb-2 rounded-box border border-secondary {{ (($finished)?'opacity-50 ':'')}}" 
-    style="background-image: url( {{ asset('storage') .'/'. $cover }} ); background-position: center;background-size:cover; ">
+    style="background-image: url( {{ (( ! empty($cover))? asset('storage') .'/'. $cover : '/images/NextToPlay.webp') }} ); background-position: center;background-size:cover; ">
     <div class="flex shadow-md h-[120px] py-2 px-1 bg-gradient w-full" style="background: 
     linear-gradient(
         to right,
@@ -30,10 +35,12 @@
         </div>
 
         <div class="flex w-[19%] items-center {{ (($finished)?'grayscale ':'')}} roundex-lg overflow-hidden">
+            @if( ! empty($cover))
             <img src="{{ asset('storage') .'/'. $cover }}" alt="{{ $name }}"  class="w-full max-w-100 rounded-box">
+            @endif
         </div>
         <div class="flex flex-col w-[53%] justify-between text-left py-3 px-3">
-            <div class="title text-primary-content font-bold text-base">{{ $name }}</div>
+            <div class="title text-primary-content font-bold text-base/5 line-clamp-3">{{ $name }}</div>
 
             <div class="text-xs uppercase font-semibold opacity-60 text-secondary-content">
             @foreach($developers as $i=>$developer)
@@ -90,7 +97,21 @@
                     </form>
                 </li>
                 <li>
-                    <button type="submit" class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content">
+                    <button 
+                        type="button" 
+                        @click="$dispatch('open-modal', 
+                        { 
+                            name:'modal-game-edit', 
+                            title: 'Modifica los datos del juego', 
+                            id: {{ $id }}, 
+                            game_id: {{ $game_id }}, 
+                            gamename: @js($name), 
+                            cover: '{{ $cover }}',
+                            developers: '@foreach($developers as $i=>$developer){{ (($i>0)?' | ':'').$developer['name'] }} @endforeach',
+                            finished: {{ $finished }},
+                            platforms: @json($platforms->pluck('id'))
+                        });"
+                        class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content">
                         <x-icon name="mdi-pencil-circle-outline" class="size-4"/> Editar
                     </button>
                 </li>

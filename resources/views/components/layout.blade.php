@@ -12,7 +12,7 @@
     @if( Illuminate\Support\Facades\Auth::id() )
         <x-navbar/>
     @endif
-    <main class="flex flex-row w-full">
+    <main class="flex flex-row w-full justify-center">
         {{ $slot }}
     </main>
     

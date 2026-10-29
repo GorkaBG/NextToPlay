@@ -21,11 +21,11 @@ return new class extends Migration
         });
 
         DB::table('platforms')->insert([
-            ['name' => 'CD / DVD', 'igdb_id' => '6', 'icon' => 'mdi-microsoft-windows'],
             ['name' => 'Steam', 'igdb_id' => '6', 'icon' => 'si-steam'],
             ['name' => 'Epic', 'igdb_id' => '6', 'icon' => 'si-epicgames'],
             ['name' => 'GOG', 'igdb_id' => '6', 'icon' => 'si-gogdotcom'],
             ['name' => 'Xbox Game Pass', 'igdb_id' => '6', 'icon' => ''],
+            ['name' => 'CD / DVD', 'igdb_id' => '6', 'icon' => 'mdi-microsoft-windows'],
             ['name' => 'Battle.net', 'igdb_id' => '6', 'icon' => 'si-battledotnet'],
             ['name' => 'GeForce Now', 'igdb_id' => '6', 'icon' => 'si-nvidia'],
             ['name' => 'EA App', 'igdb_id' => '6', 'icon' => 'si-ea'],
@@ -34,6 +34,7 @@ return new class extends Migration
             ['name' => 'Itch.io', 'igdb_id' => '6', 'icon' => 'si-itchdotio'],
             ['name' => 'Microsoft Store', 'igdb_id' => '6', 'icon' => 'mdi-microsoft'],
             ['name' => 'Amazon Luna', 'igdb_id' => '6', 'icon' => ''],
+            ['name' => 'Emulador', 'igdb_id' => '6', 'icon' => 'si-retropie'],
 
             ['name' => 'PlayStation', 'igdb_id' => '7', 'icon' => 'si-playstation'],
             ['name' => 'PlayStation 2', 'igdb_id' => '8', 'icon' => 'si-playstation2'],

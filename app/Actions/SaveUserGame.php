@@ -54,7 +54,9 @@ class SaveUserGame
 
                 $game->developers()->attach($developers);
 
-                $this->storePlatforms($game_data[0]['platforms']);
+                $this->storePlatforms($game_data[0]['platforms'], $game);
+
+                $this->storeGamePlatforms($game_data[0]['platforms'], $game);
 
                 return $game;
             });
@@ -63,7 +65,10 @@ class SaveUserGame
         if( ! GameUser::where('user_id', Auth::id())->where('game_id', $game->id)->exists()){
             $gameUser = DB::transaction(function () use($request, $game) { 
                 $gameUser = $this->storeGameUser($game->id, $request->group);
-                $this->storeGameUserPlatforms($gameUser, $request->platforms);
+
+                if( ! empty($request->platforms))
+                    $this->storeGameUserPlatforms($gameUser, $request->platforms);
+                
                 return $gameUser;
             });
         }
@@ -137,8 +142,8 @@ class SaveUserGame
                 'name' => $game_data['name'],         
                 'cover' => $image_path,
                 'release_date' => $game_data['first_release_date'],
-                'total_rating' => round( $game_data['total_rating'],1 ),
-                'total_rating_count' => $game_data['total_rating_count'],
+                'total_rating' => round( $game_data['total_rating'] ?? 0,1 ),
+                'total_rating_count' => $game_data['total_rating_count'] ?? 0,
             ]);
 
         return $game;    
@@ -160,9 +165,23 @@ class SaveUserGame
                         'igdb_id' => $platform['id'],
                         'name' => $platform['name'],
                     ])->id;                     
-                }                    
+                }
+
             }
         }
+    }
+
+    /**
+     * Obtiene un array con los ids de la base de datos de todas las plataformas en las que se encuentra el juego en IGDB y los asocia en la tabla pivote. De esta forma tenemos guardadas todas las plataformas disponibles, utilizado en la edición de un juego para no tener que volver a hacer la petición a IGDB
+     * 
+     * @param array $platforms: plataformas devueltas por IGDB donde está disponible el juego (contiene id y el nombre)
+     * @param Game $game: instancia del juego para asignar la relación
+     */
+    public function storeGamePlatforms(Array $platforms, Game $game): void
+    {
+        $db_platforms = Platform::whereIn('igdb_id', array_column($platforms, 'id') )->pluck('id')->toArray();
+
+        $game->platforms()->attach($db_platforms);
     }
 
     /**

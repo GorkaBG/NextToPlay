@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GameUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Validation\Rule;
 use App\Models\GameGroup;
 use App\Services\IGDBService;
 use App\Actions\SaveUserGame;
@@ -41,7 +41,7 @@ class GameUserController extends Controller
         $request->validate([
             'game' => ['required', 'integer', 'max_digits:6'],
             'group' => ['required', 'integer', 'max_digits:2'],
-            'platforms' => ['required', 'array'],
+            'platforms' => ['array'],
         ]);
     
         if( (new SaveUserGame)->handle($request) ) 
@@ -71,7 +71,25 @@ class GameUserController extends Controller
      */
     public function update(Request $request, GameUser $gameUser)
     {
-        //
+        //hacer esto con politica        
+        if ( $gameUser->user_id != Auth::id()){
+            return back()->with('error', 'No tienes permiso para hacer esto');;
+        }
+
+        $request->validate([
+            'name' => ['string', 'min:5','max:255'],
+                'finished' => ['sometimes', 'accepted'],
+            'platforms' => ['required', 'array'],
+        ]);
+        
+        $gameUser->update([
+            'custom_title' => $request->name,
+            'finished' => (($request->finished == 'on')? true : false),
+        ]);
+        $gameUser->platforms()->detach();
+        $gameUser->platforms()->attach($request->platforms);
+
+        return to_route('games.list')->with('success','Juego editado correctamente');
     }
 
     /**

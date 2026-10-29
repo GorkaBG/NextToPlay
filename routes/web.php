@@ -9,6 +9,7 @@ use App\Http\Controllers\GameGroupController;
 use App\Http\Controllers\GameUserController;
 use App\Services\IGDBService;
 use App\Models\GameGroup;
+use App\Models\Game;
 
 Route::view('/', 'home')->name('login')->middleware('guest');
 Route::post('/',[UserController::class, 'store'])->name('index.store')->middleware(['guest','throttle:2,1']);
@@ -19,7 +20,7 @@ Route::post('/codeaccess', [SessionController::class, 'store'])->name('codeacces
 Route::get('/logout', [SessionController::class, 'destroy'])->name('logout')->middleware('auth');
 
 Route::get('/games', [GameListController::class, 'index'])->name('games.list')->middleware('auth');
-Route::get('/games/new/{group}', [GameListController::class,'create'])->name('games.new')->middleware('auth');
+/*Route::get('/games/new/{group}', [GameListController::class,'create'])->name('games.new')->middleware('auth');
 Route::post('/games/new/{group}', function(Request $request, GameGroup $group){
     $igdb = new IGDBService();
     $games = $igdb->search2($request);
@@ -38,7 +39,8 @@ Route::delete('/groups/{gameGroup}', [GameGroupController::class, 'destroy'])->n
 //JUEGOS
 Route::post('/games/new', [GameUserController::class, 'store'])->name('games.store')->middleware('auth');
 Route::post('/games/toggle-finished', [GameUserController::class, 'toggleFinished'])->name('games.toggle.finished')->middleware('auth');
-Route::delete('/games/delete/{gameUser}', [GameUserController::class, 'destroy'])->name('games.delete')->middleware('auth');
+Route::patch('/games/{gameUser}/update', [GameUsercontroller::class, 'update'])->name('games.update')->middleware('auth');
+Route::delete('/games/{gameUser}/delete', [GameUserController::class, 'destroy'])->name('games.delete')->middleware('auth');
 
 Route::post('/games/finished', function(){
     if( session('show_finished') ){
@@ -69,6 +71,16 @@ Route::get('/api/games/search', function(Request $request){
     $games = $igdb->search($request->q);
     return response()->json($games);
 })->name('games.search');
+
+Route::get('/api/games/game_platforms', function (Request $request){
+    
+    $request->validate([
+        'q' => ['required', 'integer', 'max_digits:7']
+    ]);
+
+    $game = Game::findOrFail($request->q);
+    return response()->json($game->platforms);
+})->name('games.game_platform');
 
 Route::get('/api/icons/search', function(Request $request, BladeUI\Icons\Factory $factory){
 
