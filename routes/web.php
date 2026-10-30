@@ -39,6 +39,7 @@ Route::delete('/groups/{gameGroup}', [GameGroupController::class, 'destroy'])->n
 //JUEGOS
 Route::post('/games/new', [GameUserController::class, 'store'])->name('games.store')->middleware('auth');
 Route::post('/games/toggle-finished', [GameUserController::class, 'toggleFinished'])->name('games.toggle.finished')->middleware('auth');
+Route::post('/games/reorder', [GameUserController::class, 'changePosition'])->name('games.reorder')->middleware('auth');
 Route::patch('/games/{gameUser}/update', [GameUsercontroller::class, 'update'])->name('games.update')->middleware('auth');
 Route::delete('/games/{gameUser}/delete', [GameUserController::class, 'destroy'])->name('games.delete')->middleware('auth');
 

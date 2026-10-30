@@ -78,8 +78,8 @@ class GameUserController extends Controller
 
         $request->validate([
             'name' => ['string', 'min:5','max:255'],
-                'finished' => ['sometimes', 'accepted'],
-            'platforms' => ['required', 'array'],
+            'finished' => ['sometimes', 'accepted'],
+            'platforms' => ['array'],
         ]);
         
         $gameUser->update([
@@ -126,5 +126,37 @@ class GameUserController extends Controller
         else    
             return to_route('games.list');
         
+    }
+
+    public function changePosition(Request $request){
+
+
+        //hacer esto con politica        
+        if ( GameGroup::find($request->group_id)->user_id != Auth::id()){
+            return back()->with('error', 'No tienes permiso para hacer esto');;
+        }
+
+        $game = GameUser::find($request->id);
+
+        
+        $groupGames = GameUser::where('game_group_id', $request->group_id)->where('id','!=',$request->id)->orderBy('position','Asc')->get();
+        if(!empty($groupGames)){
+            foreach($groupGames as $k=>$gameAux){
+                //if($gameAux->id == $request->id)continue;
+                
+
+                $gameAux->update([
+                    'position' => (($k+1 < $request->position)? $k+1 : $k+2),
+                ]); 
+            }   
+        }
+
+        $game->update([
+            'game_group_id' => $request->group_id,
+            'position' => $request->position,
+        ]);   
+
+
+        return response()->json(['success'=>'cambio realizado']);
     }
 }

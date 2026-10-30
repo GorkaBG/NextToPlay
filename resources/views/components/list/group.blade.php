@@ -7,7 +7,18 @@
         {{ $group->groupname }}
     </x-list.groupheader>
     <div>
-        <ul class="list group">
+        <ul 
+            data-group-id="{{ $group->id }}" 
+            @dragover.prevent
+            @drop="
+                if (dragged && placeholder) {
+                    placeholder.replaceWith(dragged);
+                    dragged.style.opacity = '1';
+                    dragged = null;
+                    placeholder = null;
+                }
+            "
+            class="list group min-h-50">
         @foreach($userGames as $userGame)
             @if ($userGame->game_group_id == $group->id )
                 <x-list.gamecard 
@@ -23,7 +34,7 @@
                     :first_release_date="$userGame->game->first_release_date"
                     :game_id="$userGame->game_id"
                     :show="$userGame->finished == false || session('show_finished')"
-                    hltb=""  
+                    hltb="{{ $userGame->position }}"  
                 />
             @endif
         @endforeach

@@ -15,7 +15,7 @@
             </a>
         </div>
     @else
-        <div x-data="{gamelist: []}" class="flex flex-row w-full">
+        <div x-data="{gamelist: [], dragged: null, placeholder: null}" class="flex flex-row w-full">
             <!-- grupos de juegos del usuario -->
             <div class="grid w-[1500px]  m-auto mt-15 space-x-5 xl:grid-cols-3 lg:grid-cols-2 xs:grid-cols-1">
                 @foreach($groups as $group)
@@ -57,4 +57,44 @@
     @endif        
         <x-list.modals.newEditGroup />
 
+<script>
+/*const items = document.querySelectorAll('.gamecard');
+const lists = document.querySelectorAll('.group');
+
+// 1. Configurar los elementos movibles (LI)
+items.forEach(item => {
+    item.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', item.id);
+        // Retraso mínimo para que el efecto visual no desaparezca al instante
+        setTimeout(() => item.style.display = 'none', 1000);
+    });
+
+    item.addEventListener('dragend', () => {
+        item.style.display = 'block';
+    });
+});
+
+// 2. Configurar las zonas de destino (UL)
+lists.forEach(list => {
+    list.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Permite soltar el elemento
+        list.classList.add('drag-over');
+    });
+
+    list.addEventListener('dragleave', () => {
+        list.classList.remove('drag-over');
+    });
+
+    list.addEventListener('drop', (e) => {
+        e.preventDefault();
+        list.classList.remove('drag-over');
+        
+        const id = e.dataTransfer.getData('text/plain');
+        const draggableElement = document.getElementById(id);
+        
+        // Añade el LI directamente al UL de destino
+        list.appendChild(draggableElement);
+    });
+});*/
+</script>
 </x-layout>

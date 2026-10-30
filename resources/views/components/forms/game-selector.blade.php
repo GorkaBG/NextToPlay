@@ -122,11 +122,11 @@
                         for ( var x in allPlatforms[i][1]){
 
                             if(allPlatforms[i][1][x]['id'] == 6){//caso especial del PC
-                                platformTemp.push({id: "6|2", name: "Steam"});
-                                platformTemp.push({id: "6|3", name: "Epic"});
-                                platformTemp.push({id: "6|4", name: "GOG" });
-                                platformTemp.push({id: "6|5", name: "Xbox Game Pass"});
-                                platformTemp.push({id: "6|1", name: "CD/DVD"});
+                                platformTemp.push({id: "6|1", name: "Steam"});
+                                platformTemp.push({id: "6|2", name: "Epic"});
+                                platformTemp.push({id: "6|3", name: "GOG" });
+                                platformTemp.push({id: "6|4", name: "Xbox Game Pass"});
+                                platformTemp.push({id: "6|5", name: "CD/DVD"});
                                 platformTemp.push({id: "6|6", name: "Battle.net"});
                                 platformTemp.push({id: "6|7", name: "GeForce Now"});
                                 platformTemp.push({id: "6|8", name: "EA App"});

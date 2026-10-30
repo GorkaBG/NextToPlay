@@ -13,10 +13,50 @@
     'show' => true,
     'hltb' => null,
 ])
-<li 
+
+<li posi="{{ $hltb }}"
     x-init="gamelist.push({{ $igdb_id }}); "
     x-show="{{ (($show === true)?'true':'false') }}"
-    class=" gamecard mb-2 rounded-box border border-secondary {{ (($finished)?'opacity-50 ':'')}}" 
+    draggable="false"
+    data-game-user-id="{{ $id }}"
+    @dragstart="
+        dragged = $el;
+
+        placeholder = document.createElement('li');
+        placeholder.style.height = ($el.offsetHeight/1.5) + 'px';
+        placeholder.classList.add('placeholder');
+
+        $el.parentNode.insertBefore(placeholder, $el.nextSibling);
+
+        $el.style.opacity = '0.4';
+    "
+    @dragend="
+        dragged = null;
+        placeholder = null;
+        $el.style.opacity = '1';
+        $el.setAttribute('draggable', 'false');
+        /*alert( $el.parentNode.dataset.groupId +'-'+ Array.from($el.parentNode.children).indexOf($el) )
+        /*fetch(`{{ route('games.reorder') }}?id=` + $el.dataset.gameUserId + `group_id=` + $el.parentNode.dataset.groupId + `position=` + Array.from($el.parentNode.children).indexOf($el))*/
+
+        reorder_games(
+            $el.dataset.gameUserId, 
+            $el.parentNode.dataset.groupId, 
+            Array.from($el.parentNode.children).indexOf($el)+1
+        );
+    "
+    @dragover.prevent="
+        if (dragged && $el !== dragged && $el !== placeholder) {
+            const rect = $el.getBoundingClientRect();
+            const after = $event.clientY > rect.top + rect.height / 2;
+
+            $el.parentNode.insertBefore(
+                placeholder,
+                after ? $el.nextElementSibling : $el
+            );
+        }
+    "
+    
+    class="gamecard mb-2 rounded-box border border-secondary {{ (($finished)?'opacity-50 ':'')}}" 
     style="background-image: url( {{ (( ! empty($cover))? asset('storage') .'/'. $cover : '/images/NextToPlay.webp') }} ); background-position: center;background-size:cover; ">
     <div class="flex shadow-md h-[120px] py-2 px-1 bg-gradient w-full" style="background: 
     linear-gradient(
@@ -30,13 +70,17 @@
     );
 
     ">
-        <div class="flex w-[6%] space-x-0 content-center ">        
+        <div 
+            @mousedown="$el.closest('li').setAttribute('draggable', 'true')"
+            @mouseup.window="$el.closest('li').setAttribute('draggable', 'false')"
+            class="flex w-[6%] space-x-0 content-center ">        
             <x-icon name="mdi-drag-vertical" class="size-5" class="text-secondary-content"/>
         </div>
 
         <div class="flex w-[19%] items-center {{ (($finished)?'grayscale ':'')}} roundex-lg overflow-hidden">
             @if( ! empty($cover))
-            <img src="{{ asset('storage') .'/'. $cover }}" alt="{{ $name }}"  class="w-full max-w-100 rounded-box">
+            <img src="{{ asset('storage') .'/'. $cover }}" alt="{{ $name }}" 
+    draggable="false" class="w-full max-w-100 rounded-box">
             @endif
         </div>
         <div class="flex flex-col w-[53%] justify-between text-left py-3 px-3">
@@ -63,11 +107,15 @@
             @foreach($platforms as $platform)
                 <span title="{{ $platform['name'] }}">
                     @if( ! empty($platform['icon']))
-                    <x-icon name="{{ $platform['icon'] }}" style="opacity:0.7" class="text-secondary-content 
-                    {{  (( $platform['name'] === 'Steam')?'size-5':
-                        (( $platform['name'] === 'Battle.net')?'size-5':
-                        (( strpos($platform['name'], 'PlayStation') !== false )?'size-8':
-                        'size-6'))) }}"/>
+                        @if( str_contains($platform['icon'], 'ico-') )
+                            <x-dynamic-component :component="'icons.' . substr($platform['icon'], 7)" style="opacity:0.7;" class="text-secondary-content size-15 h-{{ (int)substr($platform['icon'], 4,2) }}"/>
+                        @else
+                            <x-icon name="{{ $platform['icon'] }}" style="opacity:0.7" class="text-secondary-content 
+                            {{  (( $platform['name'] === 'Steam')?'size-5':
+                                (( $platform['name'] === 'Battle.net')?'size-5':
+                                (( strpos($platform['name'], 'PlayStation') !== false )?'size-8':
+                                'size-6'))) }}"/>
+                        @endif
                     @else
                     <x-icon name="mdi-controller-classic" style="opacity:0.7" class="text-secondary-content size-6"/>
                     @endif
@@ -81,7 +129,7 @@
             </div>
             <ul
                 tabindex="-1"
-                class="menu menu-xs dropdown-content bg-secondary rounded-box z-1 w-52 p-2 shadow space-y-2 text-secondary-content  "
+                class="menu menu-xs dropdown-content bg-secondary rounded-box z-1 w-52 p-2 shadow space-y-2 text-secondary-content font-bold "
             >
                 <li>
                     <form action="{{ route ('games.toggle.finished')}}" method="POST" class="block w-full p-0">
