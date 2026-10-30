@@ -6,6 +6,7 @@ use App\Models\GameUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use App\Models\GameGroup;
 use App\Services\IGDBService;
 use App\Actions\SaveUserGame;
@@ -128,35 +129,48 @@ class GameUserController extends Controller
         
     }
 
-    public function changePosition(Request $request){
-
-
+    /**
+     * Modifica el orden de todos los juegos de un grupo a partir del juego indicado y la posición final. Para ello se obtienen todos los ítems del grupo y se les asigna su nueva posición (en base al índica $k, al empezar en 0 la posición hasta el objeto que se ordena aumenta en uno, caundo éste es encontrado se pasa a aumentarlo en 2, loq ue hace que quede esa posición del orden libre para asignárla). Se tienen en cuenta los elementos completados aunque no estén visibles (y por lo tanto no entren en el conteo del tablero) o estén colocados al final independientemente de su orden. De esta forma en vez de pasar a ser los últimos, mantienen su orden original alterado solo por las nuevas incorporaciones por encima suyo.
+     * 
+     */
+    public function changePosition(Request $request)
+    {
         //hacer esto con politica        
         if ( GameGroup::find($request->group_id)->user_id != Auth::id()){
-            return back()->with('error', 'No tienes permiso para hacer esto');;
+            return back()->with('error', 'No tienes permiso para hacer esto');
         }
+
+        $request->validate([
+            'id' => ['required','integer','max_digits:8'],
+            'group_id' => ['required','integer','max_digits:8'],
+            'position' => ['required','integer','max_digits:3'],            
+        ]);
 
         $game = GameUser::find($request->id);
 
-        
         $groupGames = GameUser::where('game_group_id', $request->group_id)->where('id','!=',$request->id)->orderBy('position','Asc')->get();
-        if(!empty($groupGames)){
-            foreach($groupGames as $k=>$gameAux){
-                //if($gameAux->id == $request->id)continue;
-                
 
-                $gameAux->update([
-                    'position' => (($k+1 < $request->position)? $k+1 : $k+2),
-                ]); 
-            }   
-        }
+        DB::transaction(function () use($request, $groupGames, $game) {
+            $finished=0;
+            $found=false; 
+            if(!empty($groupGames)){
+                foreach($groupGames as $k=>$gameAux){               
+                    if($k+1 == $request->position + $finished)
+                        $found=true;
 
-        $game->update([
-            'game_group_id' => $request->group_id,
-            'position' => $request->position,
-        ]);   
+                    $gameAux->update([
+                        'position' => (( ($k+1 < $request->position + $finished) && ! $found)? $k+1 : $k+2),
+                    ]); 
+                    if($gameAux->finished && !$found)
+                        $finished++; 
+                }   
+            }
 
+            $game->update([
+                'game_group_id' => $request->group_id,
+                'position' => $request->position+$finished,
+            ]);   
+        });
 
-        return response()->json(['success'=>'cambio realizado']);
     }
 }
