@@ -40,7 +40,7 @@ class SessionController extends Controller
         if(Hash::check($request->code, $user->code)
             && $user->code_created_at->gt(now()->subMinutes(5)) ){
 
-            Auth::login($user);
+            Auth::login($user, true);
             $request->session()->regenerate();
 
             $user->update([

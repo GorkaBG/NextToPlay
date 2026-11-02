@@ -34,7 +34,7 @@
                     :first_release_date="$userGame->game->first_release_date"
                     :game_id="$userGame->game_id"
                     :show="$userGame->finished == false || session('show_finished')"
-                    hltb="{{ $userGame->position }}"  
+                    :hltb="$userGame->game->duration"  
                 />
             @endif
         @endforeach

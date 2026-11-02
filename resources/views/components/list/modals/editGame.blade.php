@@ -58,10 +58,10 @@
         <!-- finished status -->
         <div class="flex gap-3 mt-3">
             ¿Finalizado?
-            <label class="swap swap-rotate bg-primary p-0">
+            <label class="swap swap-rotate bg-secondary p-0">
                 <input type="checkbox" name="finished" x-model="finished"/>
-                <x-icon name="mdi-square" class="p-0 swap-on h-6 w-6 fill-current"/>
-                <x-icon name="mdi-square-outline" class="p-0 swap-off h-6 w-6 fill-current "/>
+                <x-icon name="mdi-checkbox-marked-outline" class="p-0 swap-on h-6 w-6 fill-current"/>
+                <x-icon name="mdi-checkbox-blank-outline" class="p-0 swap-off h-6 w-6 fill-current "/>
             </label>
         </div>
 

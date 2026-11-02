@@ -4,16 +4,16 @@
     'color' => '#152f59',
     'icon' => null,
 ])
-<div class="flex text-center p-3 text-primary-content font-bold rounded-t-xl -mt-2 -mx-2 mb-4" style="background-color:{{ $color }};">
+<div class="flex text-center p-3 text-primary-content font-bold rounded-t-xl -mt-2 -mx-2 mb-4" style="background-color: {{ $color }};">
     <div class="flex w-[95%] items-center gap-3">
         @if( ! empty($icon) ) 
-        <x-icon name="{{ $icon }}" class="size-8 text-[{{ $color }}] brightness-150" />
+        <x-icon name="{{ $icon }}" class="size-8 text-[{{ $color }}] {{ ((auth()->user()->theme ==='dark')?'brightness-150':'brightness-200') }}" />
         @endif
-        <h2 class="text-lg">{{ $slot }}</h2>
+        <h2 class="text-lg {{ ((auth()->user()->theme ==='light')?'invert-[.94]':'') }}">{{ $slot }}</h2>
     </div>
     <div class="w-[5%] dropdown dropdown-end">
         <div tabindex="0" role="button" class="avatar cursor-pointer">                
-            <x-icon name="mdi-dots-vertical" class="size-5 text-secondary-content" />             
+            <x-icon name="mdi-dots-vertical" class="size-5 {{ ((auth()->user()->theme ==='light')?'invert-[.94]':'') }} text-secondary-content" />             
         </div>
         <ul
             tabindex="-1"

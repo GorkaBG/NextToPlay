@@ -3,6 +3,7 @@
 namespace App\Actions;
 use App\Models\User;
 use App\Notifications\AccessCodeNotification;
+use Illuminate\Support\Str;
 
 class SendAccessCode
 {
@@ -23,15 +24,22 @@ class SendAccessCode
         if(! $user){
             $user = User::create([
                 'email' => $email,
+                'password' => Str::random(64),
                 'code' => $code,
                 'code_created_at' => now(),
             ]);
         }else{
-            //El código anterior queda invalidado al generar uno nuevo        
-            $user->update([
+            //El código anterior queda invalidado al generar uno nuevo 
+            $changes = [
                 'code' => $code,
                 'code_created_at' => now(),
-            ]);
+            ];
+            
+            if (empty($user->password)) 
+                $changes['password']=Str::random(64);
+
+            $user->update($changes);
+
         }
 
         if($user){

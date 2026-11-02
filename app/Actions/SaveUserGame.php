@@ -13,6 +13,7 @@ use App\Models\Game;
 use App\Models\Platform;
 use App\Models\Developer;
 use App\Services\IGDBService;
+use App\Services\HLTBService;
 
 class SaveUserGame
 {
@@ -44,13 +45,15 @@ class SaveUserGame
             if( empty($game_data) || ! isset($game_data[0]['id']) || !is_int($game_data[0]['id']))
                 return false;//game() ha fallado
 
+            $duration = $this->getGameDuration($game_data[0]['name']);
+
             $image_path = $this->storeImage($game_data[0]['cover']['image_id'] ?? "");
 
-            $game = DB::transaction(function () use($game_data, $image_path) {                 
+            $game = DB::transaction(function () use($game_data, $image_path, $duration) {                 
 
                 $developers = $this->storeDevelopers($game_data[0]['involved_companies'] ?? []);
 
-                $game = $this->storeGame($game_data[0], $image_path);
+                $game = $this->storeGame($game_data[0], $image_path, $duration);
 
                 $game->developers()->attach($developers);
 
@@ -129,13 +132,31 @@ class SaveUserGame
         return $image_path;
     }
 
+    private function getGameDuration($name)
+    {
+        $data = [];
+        $hltb = new HLTBService();
+        $token = $hltb->getToken();
+        if(!empty($token)){
+            $hltb_results = $hltb->searchGame($name, $token);
+            
+            if(!empty ($hltb_results) ){
+                $data[] = round($hltb_results['comp_main'] / 60 / 60, 1);
+                $data[] = round($hltb_results['comp_plus'] / 60 / 60, 1);
+                $data[] = round($hltb_results['comp_100'] / 60 / 60, 1);
+            }
+        }
+        return $data;
+    }
+
     /**
      * Guarda los datos generales de un juego obtenidos de IGDB.
      * 
      * @param array @game_data: datos del juego obtenidos de IGDB. Contiene el id de IGDB, el nombre del juego, la fecha de primer lanzamiento, su rating y el número de valoraciones.
      * @param string $image_path: ruta relativa local de la imagen cover.
+     * @param array $duration: duración del juego en HLTB
      */
-    private function storeGame(Array $game_data, String $image_path): Game
+    private function storeGame(Array $game_data, String $image_path, Array $duration): Game
     {
         $game = Game::create([
                 'igdb_id' => $game_data['id'],
@@ -144,6 +165,7 @@ class SaveUserGame
                 'release_date' => $game_data['first_release_date'],
                 'total_rating' => round( $game_data['total_rating'] ?? 0,1 ),
                 'total_rating_count' => $game_data['total_rating_count'] ?? 0,
+                'duration' => $duration,
             ]);
 
         return $game;    

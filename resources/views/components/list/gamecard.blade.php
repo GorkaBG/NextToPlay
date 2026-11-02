@@ -11,10 +11,10 @@
     'finished' => false,
     'first_release_date' => null,
     'show' => true,
-    'hltb' => null,
+    'hltb',
 ])
 
-<li posi="{{ $hltb }}"
+<li 
     x-init="gamelist.push({{ $igdb_id }}); "
     x-show="{{ (($show === true)?'true':'false') }}"
     draggable="false"
@@ -56,9 +56,9 @@
         }
     "
     
-    class="gamecard mb-2 rounded-box border border-secondary {{ (($finished)?'opacity-50 ':'')}}" 
+    class="gamecard mb-2 rounded-xl  {{ (($finished)?'opacity-50 ':'')}}" 
     style="background-image: url( {{ (( ! empty($cover))? asset('storage') .'/'. $cover : '/images/NextToPlay.webp') }} ); background-position: center;background-size:cover; ">
-    <div class="flex shadow-md h-[120px] py-2 px-1 bg-gradient w-full" style="background: 
+    <div class="flex rounded-xl border border-secondary shadow-md h-[120px] py-2 px-1 bg-gradient w-full" style="background: 
     linear-gradient(
         to right,
         color-mix(in srgb, var(--color-secondary) 97%, transparent) 10%,
@@ -93,15 +93,24 @@
             </div>
         </div>
         <div class="flex flex-col w-[15%] h-full px-2 py-4 text-secondary-content text-xs">
+            @if ( ! empty($hltb) )
+                @php
+                    foreach($hltb as $k=>$duration){
+                        $hours = floor($duration);
+                        $decimal = $duration - $hours;
+                        $hltb[$k] = $hours.(( $decimal >= 0.25 && $decimal <= 0.75 )? '½':'');
+                    }
+                @endphp
             <div class="flex flex-1 items-center">
-                <x-icon name="heroicon-o-clock" class="size-4 mr-1"/> 30h
+                <x-icon name="heroicon-o-clock" class="size-4 mr-1"/> {{$hltb[0]}}h
             </div>
             <div class="flex flex-1 items-center">
-                <x-icon name="heroicon-o-sparkles" class="size-4 mr-1"/> 20h
+                <x-icon name="heroicon-o-sparkles" class="size-4 mr-1"/> {{ $hltb[1] }}h
             </div>
             <div class="flex flex-1 items-center">
-                <x-icon name="heroicon-o-trophy" class="size-4 mr-1"/> 150h
+                <x-icon name="heroicon-o-trophy" class="size-4 mr-1"/> {{ $hltb[2] }}h
             </div>
+            @endif
         </div>
         <div class="flex flex-col w-[13%] justify-center space-y-2 items-center">
             @foreach($platforms as $platform)

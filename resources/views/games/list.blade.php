@@ -17,7 +17,7 @@
     @else
         <div x-data="{gamelist: [], dragged: null, placeholder: null}" class="flex flex-row w-full">
             <!-- grupos de juegos del usuario -->
-            <div class="grid w-[1500px]  m-auto mt-15 space-x-5 xl:grid-cols-3 lg:grid-cols-2 xs:grid-cols-1">
+            <div class="grid w-[1500px]  m-auto mt-15 px-4 gap-5 xl:grid-cols-3 lg:grid-cols-2 grid-cols-1  ">
                 @foreach($groups as $group)
                     <x-list.group :group="$group" :userGames="$userGames" />                
                 @endforeach

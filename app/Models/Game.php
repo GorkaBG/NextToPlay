@@ -17,13 +17,15 @@ class Game extends Model
         'cover',
         'release_date',
         'total_rating',
-        'total_rating_count'
+        'total_rating_count',
+        'duration',
     ];
 
     protected function casts(): array
     {
         return [
-            'release_date' => 'datetime',            
+            'release_date' => 'datetime', 
+            'duration' => 'array',           
         ];
     }
 
