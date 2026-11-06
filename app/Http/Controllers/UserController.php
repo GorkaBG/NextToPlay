@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Actions\SendAccessCode;
 
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra el perfil de usuario [No existe en esta versión]
      */
     public function index()
     {
@@ -18,7 +19,7 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Envía el código de acceso al usuario. Si e'usuario no existe, previamente lo crea con el email facilitado.
      */
     public function store(Request $request)
     {
@@ -33,34 +34,15 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Cambia el tema preferido del usuario de claro a oscuro o viceversa
      */
-    public function show(User $user)
+    public function toggleTheme()
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
+        if( Auth::user()->theme =='dark' ){
+            Auth::user()->update(['theme'=>'light']);
+        }else{
+            Auth::user()->update(['theme' => 'dark']);
+        }
+        return back();
     }
 }

@@ -53,13 +53,13 @@
         </div>
 
         <!-- custom title -->
-        <x-forms.field name="name" label="Nombre del juego" class="w-full" x-model="gameName" required/>
+        <x-forms.field name="name" required label="Nombre del juego" class="w-full" x-model="gameName" data-test="editar-nombre-juego"/>
 
         <!-- finished status -->
         <div class="flex gap-3 mt-3">
             ¿Finalizado?
-            <label class="swap swap-rotate bg-secondary p-0">
-                <input type="checkbox" name="finished" x-model="finished"/>
+            <label class="swap swap-rotate bg-secondary p-0" data-test="editar-finalizado">
+                <input type="checkbox" name="finished" x-model="finished" />
                 <x-icon name="mdi-checkbox-marked-outline" class="p-0 swap-on h-6 w-6 fill-current"/>
                 <x-icon name="mdi-checkbox-blank-outline" class="p-0 swap-off h-6 w-6 fill-current "/>
             </label>
@@ -72,8 +72,8 @@
         <div 
             class="grid grid-cols-2 mt-2 gap-2">
             
-            <template x-for="pl in selectedGamePlatforms" :key="pl.id">
-                <div>
+            <template x-for="(pl,index) in selectedGamePlatforms" :key="pl.id">
+                <div :data-test="'plataforma-' + (index+1)">
                     <input type="checkbox" name="platforms[]" :id="pl.name" :value="pl.id" :checked="platforms.includes(pl.id)"/>
                     <label :for="pl.name"><span x-text="pl.name"></label>
                 </div>
@@ -81,7 +81,7 @@
         </div>
 
 
-        <x-list.modals.buttons />
+        <x-modals.buttons type="juego-editado" />
     </form>
 
     <script>

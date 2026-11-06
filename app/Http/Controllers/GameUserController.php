@@ -2,48 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GameUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
+use App\Models\Game;
 use App\Models\GameGroup;
+use App\Models\GameUser;
 use App\Services\IGDBService;
 use App\Actions\SaveUserGame;
+use App\Actions\ChangeUserGameOrder;
 
 class GameUserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra el listado de juegos del usuario conectado en los grupos generados y ordenados según su criterio
      */
-    public function index()
+    public function index(): View
     {
-        //
+        $groups = Auth::user()->gameGroups()->orderBy('order','Asc')->get();
+        $userGames = Auth::user()->userGames()->orderBy('finished','Asc')->orderBy('position','Asc')->get();
+
+        return view('games.list', [
+            'groups' => $groups,
+            'userGames' => $userGames,
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Asigna un juego al usuario conectado. Si el juego seleccioando no existe aún en la base de datos, también guardará sus datos.
      */
-    public function create()
+    public function store(Request $request): RedirectResponse
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //hacer esto con politica        
-        if ( GameGroup::find($request->group)->user_id != Auth::id()){
-            return back()->with('error', 'No tienes permiso para hacer esto');;
-        }
-
         $request->validate([
             'game' => ['required', 'integer', 'max_digits:6'],
             'group' => ['required', 'integer', 'max_digits:2'],
             'platforms' => ['array'],
         ]);
+
+        if( Gate::denies('workWith', GameGroup::find($request->group)) ){
+            return back()->with('error', 'No tienes permiso para hacer esto');
+        } 
     
         if( (new SaveUserGame)->handle($request) ) 
             return to_route('games.list')->with('success', 'Juego añadido al listado');
@@ -51,77 +53,58 @@ class GameUserController extends Controller
             return to_route('games.list')->with('error', 'Ocurrió un problema');
     }
 
+    
     /**
-     * Display the specified resource.
+     * Actualiza los datos de un juego del usuario conectado, pudiendo asignar un nombre personalizado, cambiar su estado y las plataormas en las que lo posee
      */
-    public function show(GameUser $gameUser)
+    public function update(Request $request, GameUser $gameUser): RedirectResponse
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(GameUser $gameUser)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, GameUser $gameUser)
-    {
-        //hacer esto con politica        
-        if ( $gameUser->user_id != Auth::id()){
-            return back()->with('error', 'No tienes permiso para hacer esto');;
-        }
-
         $request->validate([
             'name' => ['string', 'min:5','max:255'],
             'finished' => ['sometimes', 'accepted'],
             'platforms' => ['array'],
         ]);
         
+        if( Gate::denies('workWith', $gameUser) ){
+            return back()->with('error', 'No tienes permiso para hacer esto');
+        }
+
         $gameUser->update([
             'custom_title' => $request->name,
-            'finished' => (($request->finished == 'on')? true : false),
+            'finished' => $request->boolean('finished'),
         ]);
-        $gameUser->platforms()->detach();
-        $gameUser->platforms()->attach($request->platforms);
+        $gameUser->platforms()->sync($request->platforms);
 
         return to_route('games.list')->with('success','Juego editado correctamente');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina la asignación de un juego al usuario conectado.
      */
-    public function destroy(GameUser $gameUser)
+    public function destroy(GameUser $gameUser): RedirectResponse
     {      
-        //hacer esto con politica  
-        if($gameUser->user_id != Auth::id()){
-            return to_route('games.list')->with('error', 'Ocurrió un error');        
+        if( Gate::denies('workWith', $gameUser) ){
+            return back()->with('error', 'No tienes permiso para hacer esto');
         }
 
         $gameUser->delete();
         return to_route('games.list')->with('success', 'Juego eliminado correctamente');        
     }
 
-    public function toggleFinished(Request $request)
+    /**
+     * Cambia el estado del juego para el usuario
+     */
+    public function toggleFinished(GameUser $gameUser): RedirectResponse
     {
-        $request->validate([
-            'gameId' => ['integer','min-digits:1', 'max-digits:2'],
-        ]);
-
-        $gameUser = GameUser::find( $request->gameId );
-
+        //hacer esto con politica  
         if($gameUser->user_id != Auth::id()){
-            return to_route('games.list');
+            return to_route('games.list')->with('error', 'Ocurrió un error');        
         }
 
         $gameUser->update([
             'finished' => ! $gameUser->finished,
         ]);
+
         if($gameUser->finished === true)
             return to_route('games.list')->with('success', '¡Enhorabuena! Ahora... ¡A por el siguiente!');
         else    
@@ -130,15 +113,10 @@ class GameUserController extends Controller
     }
 
     /**
-     * Modifica el orden de todos los juegos de un grupo a partir del juego indicado y la posición final. Para ello se obtienen todos los ítems del grupo y se les asigna su nueva posición (en base al índica $k, al empezar en 0 la posición hasta el objeto que se ordena aumenta en uno, caundo éste es encontrado se pasa a aumentarlo en 2, loq ue hace que quede esa posición del orden libre para asignárla). Se tienen en cuenta los elementos completados aunque no estén visibles (y por lo tanto no entren en el conteo del tablero) o estén colocados al final independientemente de su orden. De esta forma en vez de pasar a ser los últimos, mantienen su orden original alterado solo por las nuevas incorporaciones por encima suyo.
-     * 
+     * Modifica el orden de todos los juegos de un grupo a partir del juego indicado y la posición final.  
      */
     public function changePosition(Request $request)
     {
-        //hacer esto con politica        
-        if ( GameGroup::find($request->group_id)->user_id != Auth::id()){
-            return back()->with('error', 'No tienes permiso para hacer esto');
-        }
 
         $request->validate([
             'id' => ['required','integer','max_digits:8'],
@@ -146,31 +124,50 @@ class GameUserController extends Controller
             'position' => ['required','integer','max_digits:3'],            
         ]);
 
+        //hacer esto con politica                
+        if( Gate::denies('workWith', GameGroup::find($request->group_id)) ){
+            return back()->with('error', 'No tienes permiso para hacer esto');
+        } 
+
         $game = GameUser::find($request->id);
 
         $groupGames = GameUser::where('game_group_id', $request->group_id)->where('id','!=',$request->id)->orderBy('position','Asc')->get();
 
-        DB::transaction(function () use($request, $groupGames, $game) {
-            $finished=0;
-            $found=false; 
-            if(!empty($groupGames)){
-                foreach($groupGames as $k=>$gameAux){               
-                    if($k+1 == $request->position + $finished)
-                        $found=true;
+        (new ChangeUserGameOrder)->changeOrder($request, $groupGames, $game);
 
-                    $gameAux->update([
-                        'position' => (( ($k+1 < $request->position + $finished) && ! $found)? $k+1 : $k+2),
-                    ]); 
-                    if($gameAux->finished && !$found)
-                        $finished++; 
-                }   
-            }
+    }
 
-            $game->update([
-                'game_group_id' => $request->group_id,
-                'position' => $request->position+$finished,
-            ]);   
-        });
+    /**
+     * Cambia el estado de visibilidad de losjuegos completados para el usuario. Solo dura durante la sesión.
+     */
+    public function toggleShowFinished(): RedirectResponse
+    {
+        session(['show_finished'=> ! session('show_finished', false) ]);
+        return back();
+    }
 
+    /**
+     * Devuelve el resultado de una búsqueda en IGDB según el texto que se le pase
+     */
+    public function igdbSearch(Request $request): JsonResponse
+    {
+        $request->validate([
+            'q' => ['required', 'string', 'min:4']
+        ]);
+
+        $games = (new IGDBService)->search($request->q);
+        return response()->json($games);
+    }
+
+    /**
+     * Devuelve el listado de plataformas en las que un juego está disponible
+     */
+    public function gamePlatforms(Request $request): JsonResponse
+    {        
+        $request->validate([
+            'q' => ['required', 'integer', 'max_digits:7']
+        ]);
+        $game = Game::findOrFail($request->q);
+        return response()->json($game->platforms);
     }
 }

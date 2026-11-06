@@ -5,7 +5,7 @@
         role="alert"
         x-data="{ show:false }" 
         x-show="show"
-        x-init="$nextTick(() => show = true);setTimeout( ()=>show = false, 3000 )"
+        x-init="$nextTick(() => show = true);setTimeout( ()=>show = false, 5000 )"
         x-transition:enter="transition ease-out duration-800"
         x-transition:enter-start="opacity-0 translate-x-full"
         x-transition:enter-end="opacity-100 translate-x-0"

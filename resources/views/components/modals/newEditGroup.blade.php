@@ -7,7 +7,7 @@
         @open-modal.window="
             if ($event.detail.name === name){                            
                 if($event.detail.id) {
-                    action = '/groups/'+$event.detail.id;                   
+                    action = '{{ route('groups.update', ['gameGroup' => '__ID__']) }}'.replace('__ID__', $event.detail.id);                   
                     editing = true;
                 }   
                 $nextTick(() => {
@@ -15,20 +15,20 @@
                 });
             }
         "
-        @close-modal.window="$el.reset();"
+        @close-modal.window="$el.reset();action = `{{ route('groups.store') }}`"
         class="flex flex-col w-full space-y-2 text-secondary-content">
         @csrf
         <template x-if="editing">
             <input type="hidden" name="_method" value="PATCH">
         </template>
 
-        <x-forms.field name="name" label="Nombre del grupo" class="w-full" x-model="groupname" required/>
+        <x-forms.field name="name" required label="Nombre del grupo" maxlength="30" x-model="groupname" data-test="nombre-grupo" class="w-full" />
 
-        <x-forms.field name="color" type="color" label="Selecciona un color" class="max-w-2xl" required  x-model="color" />
+        <x-forms.field name="color" required type="color" x-model="color" label="Selecciona un color" data-test="color-grupo" class="max-w-2xl" />
     
-        <x-forms.icon-selector name="icon" label="Selecciona un icono" x-model="icon" />
+        <x-forms.icon-selector name="icon" x-model="icon" data_test="icono-grupo" label="Selecciona un icono" />
 
-        <x-list.modals.buttons />
+        <x-modals.buttons type="grupo" />
 
     </form>
 </x-modal>

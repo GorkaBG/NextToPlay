@@ -60,6 +60,9 @@ it('Impide la introducción de 3 usuarios seguidos en 1 minuto', function(){
         ->navigate('/')
         ->fill('email', fake()->safeEmail())        
         ->click('@btn-entrar')
+        ->navigate('/')
+        ->fill('email', fake()->safeEmail())        
+        ->click('@btn-entrar')
         ->assertSee('Too Many Requests');
 });
 

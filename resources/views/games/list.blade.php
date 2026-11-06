@@ -23,13 +23,6 @@
                 @endforeach
             </div>
 
-            @if( session('error') || session('success') )
-                <!-- mensaje de error o success-->
-                <x-alert type="{{ ((session('success'))?'success':'warning') }}" >
-                    {{ session('error') ?? session('success')  }}
-                </x-alert>
-            @endif   
-    
             <!-- Dialog de eliminación de juego -->
             <x-dialog name="confirm-dialog">
                 <p class="py-4">
@@ -47,54 +40,21 @@
                         method="POST">
                         @csrf
                         @method('DELETE')                
-                        <button type="submit" ref="`/groups/${itemId}/delete`" class="btn border-0 bg-error text-error-content">Sí, elimínalo</button>
+                        <button type="submit" ref="`/groups/${itemId}/delete`" class="btn border-0 bg-error text-error-content" data-test="Eliminar">Sí, elimínalo</button>
                     </form>
                 </div>
             </x-dialog>
-            <x-list.modals.newGame />
-            <x-list.modals.editGame />
+            <x-modals.newGame />
+            <x-modals.editGame />
         </div>
     @endif        
-        <x-list.modals.newEditGroup />
-
-<script>
-/*const items = document.querySelectorAll('.gamecard');
-const lists = document.querySelectorAll('.group');
-
-// 1. Configurar los elementos movibles (LI)
-items.forEach(item => {
-    item.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', item.id);
-        // Retraso mínimo para que el efecto visual no desaparezca al instante
-        setTimeout(() => item.style.display = 'none', 1000);
-    });
-
-    item.addEventListener('dragend', () => {
-        item.style.display = 'block';
-    });
-});
-
-// 2. Configurar las zonas de destino (UL)
-lists.forEach(list => {
-    list.addEventListener('dragover', (e) => {
-        e.preventDefault(); // Permite soltar el elemento
-        list.classList.add('drag-over');
-    });
-
-    list.addEventListener('dragleave', () => {
-        list.classList.remove('drag-over');
-    });
-
-    list.addEventListener('drop', (e) => {
-        e.preventDefault();
-        list.classList.remove('drag-over');
-        
-        const id = e.dataTransfer.getData('text/plain');
-        const draggableElement = document.getElementById(id);
-        
-        // Añade el LI directamente al UL de destino
-        list.appendChild(draggableElement);
-    });
-});*/
-</script>
+    <x-modals.newEditGroup />
+    
+    @if( session('error') || session('success') || $errors->any() )
+        <!-- mensaje de error o success-->
+        <x-alert type="{{ ((session('success'))?'success':'warning') }}" >
+            {{ session('error') ?? session('success') ?? $errors->first() }}
+        </x-alert>
+    @endif   
+    
 </x-layout>

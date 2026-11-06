@@ -14,7 +14,6 @@
     @endif
     <main class="flex flex-row w-full justify-center">
         {{ $slot }}
-    </main>
-    
+    </main>    
 </body>
 </html>

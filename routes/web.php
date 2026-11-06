@@ -1,144 +1,68 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SessionController;
-use App\Http\Controllers\GameListController;
 use App\Http\Controllers\GameGroupController;
 use App\Http\Controllers\GameUserController;
-use App\Services\IGDBService;
-use App\Models\GameGroup;
-use App\Models\Game;
 
-Route::view('/', 'home')->name('login')->middleware('guest');
-Route::post('/',[UserController::class, 'store'])->name('index.store')->middleware(['guest','throttle:2,1']);
+/**
+ * Rutas de acceso para el login, en las que se solicita el email y el código. Para prevenir abusos, se permiten 3 solicitudes de código y 5 intentos de verificación por minuto antes de mostrar el error de peticiones excedidas.
+ */
+Route::middleware('guest')->group(function(){  
 
-Route::view('/codeaccess', 'codeAccess')->name('codeaccess')->middleware('guest');
-Route::post('/codeaccess', [SessionController::class, 'store'])->name('codeaccess.store')->middleware(['guest','throttle:5,1']);
-
-Route::get('/logout', [SessionController::class, 'destroy'])->name('logout')->middleware('auth');
-
-Route::get('/games', [GameListController::class, 'index'])->name('games.list')->middleware('auth');
-/*Route::get('/games/new/{group}', [GameListController::class,'create'])->name('games.new')->middleware('auth');
-Route::post('/games/new/{group}', function(Request $request, GameGroup $group){
-    $igdb = new IGDBService();
-    $games = $igdb->search2($request);
-    return view( 'games.create', [
-                    'games' => $games,
-                    'group' => $group,
-                    ] );
-} )->name('IGDB.search')->middleware('auth');
-
-//GRUPOS
-/*Route::get('/groups/new', [GameGroupController::class, 'create'])->name('groups.create')->middleware('auth');*/
-Route::post('/groups/new', [GameGroupController::class, 'store'])->name('groups.store')->middleware('auth');
-Route::patch('/groups/{gameGroup}', [GameGroupController::class, 'update'])->name('groups.update')->middleware('auth');
-Route::delete('/groups/{gameGroup}', [GameGroupController::class, 'destroy'])->name('groups.delete')->middleware('auth');
-
-//JUEGOS
-Route::post('/games/new', [GameUserController::class, 'store'])->name('games.store')->middleware('auth');
-Route::post('/games/toggle-finished', [GameUserController::class, 'toggleFinished'])->name('games.toggle.finished')->middleware('auth');
-Route::post('/games/reorder', [GameUserController::class, 'changePosition'])->name('games.reorder')->middleware('auth');
-Route::patch('/games/{gameUser}/update', [GameUsercontroller::class, 'update'])->name('games.update')->middleware('auth');
-Route::delete('/games/{gameUser}/delete', [GameUserController::class, 'destroy'])->name('games.delete')->middleware('auth');
-
-Route::post('/games/finished', function(){
-    if( session('show_finished') ){
-        session(['show_finished'=>false]) ;
-    }else{
-        session(['show_finished'=>true]);
-    }
-    return back();
-})->name('toggle.finished');
-
-Route::post('/profile/theme', function(){
+    Route::view('/', 'home')->name('login');
+    Route::post('/',[UserController::class, 'store'])->name('index.store')->middleware('throttle:3,1');
     
-        
-    if( Illuminate\Support\Facades\Auth::user()->theme =='dark' ){
-        Illuminate\Support\Facades\Auth::user()->update(['theme'=>'light']);
-    }else{
-        Illuminate\Support\Facades\Auth::user()->update(['theme' => 'dark']);
-    }
-    return back();
-})->name('toggle.theme');
+    Route::view('/codeaccess', 'codeAccess')->name('codeaccess');
+    Route::post('/codeaccess', [SessionController::class, 'store'])->name('codeaccess.store')->middleware('throttle:5,1');
 
-Route::get('/api/games/search', function(Request $request){
-    $request->validate([
-        'q' => ['required', 'string', 'min:4']
-    ]);
+});
 
-    $igdb = new IGDBService();
-    $games = $igdb->search($request->q);
-    return response()->json($games);
-})->name('games.search');
+/**
+ * Rutas privadas para los usuarios conectados con las funcionalidades de la aplicación
+ */
+Route::middleware('auth')->group(function(){    
 
-Route::get('/api/games/game_platforms', function (Request $request){
-    
-    $request->validate([
-        'q' => ['required', 'integer', 'max_digits:7']
-    ]);
+    Route::delete('/logout', [SessionController::class, 'destroy'])->name('logout');
 
-    $game = Game::findOrFail($request->q);
-    return response()->json($game->platforms);
-})->name('games.game_platform');
+    /**
+     * Rutas del listado de juegos
+     */
+    Route::get('/games', [GameUserController::class, 'index'])->name('games.list');
+    Route::post('/games/finished', [GameUserController::class, 'toggleShowFinished'])->name('games.show.finished');
+    Route::post('/games/reorder', [GameUserController::class, 'changePosition'])->name('games.reorder');
 
-Route::get('/api/icons/search', function(Request $request, BladeUI\Icons\Factory $factory){
+    /**
+     * Acciones de juegos del usuario
+     */
+    Route::post('/games/new', [GameUserController::class, 'store'])->name('games.store');
+    Route::post('/games/{gameUser}/toggle-finished', [GameUserController::class, 'toggleFinished'])->name('games.toggle.finished');
+    Route::patch('/games/{gameUser}/update', [GameUserController::class, 'update'])->name('games.update');
+    Route::delete('/games/{gameUser}/delete', [GameUserController::class, 'destroy'])->name('games.delete');
 
-$search = strtolower($request->get('q', ''));
-       $search = strtolower($request->get('q', ''));
-        $allIcons = [];
+    /**
+     * Acciones Ajax del modal de juegos
+     */
+    Route::get('/api/games/search', [GameUserController::class, 'igdbSearch'])->name('games.search');
+    Route::get('/api/games/game_platforms', [GameUserController::class, 'gamePlatforms'])->name('games.game_platform');
 
-        // Iteramos sobre el array de configuraciones de los sets instalados
-        foreach ($factory->all() as $set) {
-            $prefix = $set['prefix'] ?? '';
-            $paths = $set['paths'] ?? [];
+    /**
+     * Acciones de grupos del usuario
+     */
+    Route::post('/groups/new', [GameGroupController::class, 'store'])->name('groups.store');
+    Route::patch('/groups/{gameGroup}', [GameGroupController::class, 'update'])->name('groups.update');
+    Route::delete('/groups/{gameGroup}', [GameGroupController::class, 'destroy'])->name('groups.delete');
 
-            if (empty($prefix) || empty($paths)) {
-                continue;
-            }
+    /**
+     * Acciones del modal de grupos
+     */
+    Route::get('/api/icons/search', [GameGroupController::class,'iconSearch'])->name('icons.search');
+    Route::get('/icons/svg', [GameGroupController::class, 'getIcon'])->name('icons.svg');
 
-            // Recorremos cada directorio físico asignado a este set de iconos
-            foreach ($paths as $path) {
-                if (!File::isDirectory($path)) {
-                    continue;
-                }
+    /**
+     * Acciones de usuario
+     */
+    Route::post('/user/theme', [UserController::class, 'toggleTheme'])->name('toggle.theme');
 
-                // Obtenemos todos los archivos .svg del directorio
-                $files = File::files($path);
-
-                foreach ($files as $file) {
-                    if ($file->getExtension() === 'svg') {
-                        // Nombre del archivo sin la extensión .svg
-                        $iconName = $file->getFilenameWithoutExtension();
-                        
-                        // Formamos el nombre completo: "prefix-nombre" (ej: heroicon-o-user)
-                        $fullName = $prefix . '-' . $iconName;
-
-                        // Filtramos si hay una búsqueda activa
-                        if (empty($search) || str_contains($fullName, $search)) {
-                            $allIcons[] = $fullName;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Ordenamos alfabéticamente y eliminamos posibles duplicados
-        $allIcons = array_unique($allIcons);
-        sort($allIcons);
-        // Limitamos el resultado (ej: 50 elementos) para mantener el rendimiento del buscador
-        return response()->json(array_slice($allIcons, 0, 42));
-
-})->name('icons.search');
-
-Route::get('/icons/svg', function(Request $request, BladeUI\Icons\Factory $factory){
-$name = $request->get('name');
-    try {
-        // SVG directo listo para inyectar con x-html
-        return response($factory->svg($name)->toHtml(), 200)
-                ->header('Content-Type', 'image/svg+xml');
-    } catch (\Exception $e) {
-        return response('', 404);
-    }
-})->name('icons.svg');
+});

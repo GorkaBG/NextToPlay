@@ -21,7 +21,7 @@
         <div class="flex w-full sm:w-auto justify-between gap-5 md:gap-10 ">
             <div class="text-primary-content content-center text-sm {{ (( ! session('show_finished'))?'opacity-50':'') }}">
                 <form 
-                    action="{{ route('toggle.finished') }}" 
+                    action="{{ route('games.show.finished') }}" 
                     method="POST"
                     x-data
                     >
@@ -73,9 +73,13 @@
                         </a>
                     </li-->
                     <li>
-                        <a href="{{ route('logout') }}" class="text-sm text-primary-content">
-                            <x-icon name="mdi-power" class="size-4"/> Cerrar sesión
-                        </a>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="flex text-sm text-primary-content items-center gap-2">
+                                <x-icon name="mdi-power" class="size-4"/> Cerrar sesión
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </div>

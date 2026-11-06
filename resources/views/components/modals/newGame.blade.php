@@ -20,9 +20,9 @@
 
         <input type="hidden" name="group" :value="groupId" />
 
-        <x-forms.game-selector name="game" label="Selecciona el juego" x-model="game" />
+        <x-forms.game-selector x-model="game"  name="game" label="Selecciona el juego" data_test="juego"/>
 
-        <x-list.modals.buttons />
+        <x-modals.buttons type="nuevo-juego"/>
         
     </form>
     

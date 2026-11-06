@@ -2,6 +2,7 @@
     'name' => 'game',
     'label' => '',
     'value' => '',
+    'data_test' => '',
 ])
 
 <label for="{{ $name }}" class="block text-lg font-semibold mb-2">
@@ -16,27 +17,34 @@
     {{ $attributes }}
 >  
 
-    <input type="hidden" type="hidden" name="{{ $name }}" :value="selectedGame" required>
+    <input type="hidden" required name="{{ $name }}" :value="selectedGame"  data-test="{{ $data_test }}">
     <x-forms.field 
         name="gameSelector"
+        required
         placeholder="Escribe para buscar..."
         x-model="gameSearch"
         @input.debounce.300ms="showGames()"
         @focus="open = true"
         @click.away="open = false"
-        required
+        data-test="{{ $data_test }}-busqueda"
     />  
 
 
     <ul class="dropdown-content flex flex-col py-2 px-3 shadow bg-secondary tex-secondary-content rounded-box w-full max-h-100 space-y-2 overflow-y-auto z-50 mt-11 border border-secondary-content scrollbar-thumb-secondary-content" x-show="open && results.length > 0">
-        <template x-for="game in results" :key="game.id">
-            <li class="flex p-3 bg-secondary-content/30 rounded-box w-full cursor-pointer tooltip" :data-tip="game.name" @click="selectGame(game.id, game.name)" x-show="! gamelist.includes(game.id)">
+        <template x-for="(game, index) in results" :key="game.id">
+            <li 
+                x-show="! gamelist.includes(game.id)"
+                @click="selectGame(game.id, game.name)" 
+                :data-tip="game.name"
+                class="flex p-3 bg-secondary-content/30 rounded-box w-full cursor-pointer tooltip"
+                :data-test="'juego-' + (index+1)"  
+            >
                 <div class="max-w-[15%]">
-                    <img class="size-15 rounded-box" :src="game.cover.url" x-show="game.cover.url.length>0" />
+                    <img :src="game.cover.url" x-show="game.cover.url.length>0" class="size-15 rounded-box" />
                 </div>
                 <div  class="flex flex-col max-w-[85%] justify-between text-left py-1 px-3">
                     <div  class="title text-primary-content font-bold text-base">
-                        <span x-text="game.name"></span> (<span x-text="new Date(game.first_release_date * 1000).getFullYear()"></span>)
+                        <span x-text="game.name" class="gameName"></span> (<span x-text="new Date(game.first_release_date * 1000).getFullYear()"></span>)
                     </div>
                     <div class="text-xs uppercase font-semibold opacity-60 text-secondary-content">
                         <span x-text="game.developers"></span>
@@ -56,8 +64,8 @@
         Selecciona la(s) plataforma(s) o tienda(s) donde lo tienes para jugar
     </p>
     <div class="grid grid-cols-2 mt-4 gap-2">
-        <template x-for="pl in selectedGamePlatforms" :key="pl.id">
-            <div>
+        <template x-for="(pl, index) in selectedGamePlatforms" :key="pl.id">
+            <div :data-test="'plataforma-' + (index+1)">
                 <input type="checkbox" name="platforms[]" :id="pl.name" :value="pl.id"/>
                 <label :for="pl.name"><span x-text="pl.name"></label>
             </div>

@@ -35,9 +35,7 @@
         placeholder = null;
         $el.style.opacity = '1';
         $el.setAttribute('draggable', 'false');
-        /*alert( $el.parentNode.dataset.groupId +'-'+ Array.from($el.parentNode.children).indexOf($el) )
-        /*fetch(`{{ route('games.reorder') }}?id=` + $el.dataset.gameUserId + `group_id=` + $el.parentNode.dataset.groupId + `position=` + Array.from($el.parentNode.children).indexOf($el))*/
-
+        
         reorder_games(
             $el.dataset.gameUserId, 
             $el.parentNode.dataset.groupId, 
@@ -54,10 +52,10 @@
                 after ? $el.nextElementSibling : $el
             );
         }
-    "
-    
+    "    
     class="gamecard mb-2 rounded-xl  {{ (($finished)?'opacity-50 ':'')}}" 
-    style="background-image: url( {{ (( ! empty($cover))? asset('storage') .'/'. $cover : '/images/NextToPlay.webp') }} ); background-position: center;background-size:cover; ">
+    style="background-image: url( {{ (( ! empty($cover))? asset('storage') .'/'. $cover : '/images/NextToPlay.webp') }} ); background-position: center;background-size:cover; "
+>
     <div class="flex rounded-xl border border-secondary shadow-md h-[120px] py-2 px-1 bg-gradient w-full" style="background: 
     linear-gradient(
         to right,
@@ -92,8 +90,8 @@
             @endforeach
             </div>
         </div>
-        <div class="flex flex-col w-[15%] h-full px-2 py-4 text-secondary-content text-xs">
-            @if ( ! empty($hltb) )
+        <div class="flex flex-col w-[16%] h-full px-2 py-4 text-secondary-content text-xs">
+            @if ( ! empty($hltb) && $hltb[0] != 0 )
                 @php
                     foreach($hltb as $k=>$duration){
                         $hours = floor($duration);
@@ -112,7 +110,7 @@
             </div>
             @endif
         </div>
-        <div class="flex flex-col w-[13%] justify-center space-y-2 items-center">
+        <div class="flex flex-col w-[12%] justify-center space-y-2 items-center">
             @foreach($platforms as $platform)
                 <span title="{{ $platform['name'] }}">
                     @if( ! empty($platform['icon']))
@@ -134,17 +132,16 @@
 
         <div class="w-[4%] dropdown dropdown-end">
             <div tabindex="0" role="button" class="avatar cursor-pointer">                 
-                <x-icon name="mdi-dots-vertical" class="size-5 text-secondary-content" />           
+                <x-icon name="mdi-dots-vertical" class="size-5 text-secondary-content"  data-test="menu-juego-{{ $id }}"/>           
             </div>
             <ul
                 tabindex="-1"
                 class="menu menu-xs dropdown-content bg-secondary rounded-box z-1 w-52 p-2 shadow space-y-2 text-secondary-content font-bold "
             >
                 <li>
-                    <form action="{{ route ('games.toggle.finished')}}" method="POST" class="block w-full p-0">
-                        @csrf
-                        <x-forms.field type="hidden" name="gameId" value="{{ $id }}" />
-                        <button type="submit" class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content">
+                    <form action="{{ route ('games.toggle.finished', $id)}}" method="POST" class="block w-full p-0">
+                        @csrf                        
+                        <button type="submit" class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content" data-test="finalizar-juego-{{ $id }}">
                         @if ($finished)
                             <x-icon name="mdi-checkbox-blank-circle-outline" class="size-4"/> Quitar finalizado
                         @else
@@ -168,7 +165,9 @@
                             finished: {{ $finished }},
                             platforms: @json($platforms->pluck('id'))
                         });"
-                        class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content">
+                        class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content"
+                        data-test="editar-juego-{{ $id }}"
+                    >
                         <x-icon name="mdi-pencil-circle-outline" class="size-4"/> Editar
                     </button>
                 </li>
@@ -177,7 +176,7 @@
                         @csrf
                         @method('DELETE')
                         <x-forms.field type="hidden" name="gameId" value="{{ $id }}" />
-                        <button type="submit" class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content">
+                        <button type="submit" class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content" data-test="quitar-juego-{{ $id }}">
                             <x-icon name="mdi-progress-close" class="size-4"/> Quitar
                         </button>
                     </form>

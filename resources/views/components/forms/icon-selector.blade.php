@@ -2,6 +2,7 @@
     'name' => 'icon',
     'label' => '',
     'value' => '',
+    'data_test' => '',
 ])
 
 <label for="{{ $name }}" class="block text-lg font-semibold mb-2">
@@ -15,7 +16,7 @@
     class="flex dropdown max-w-xs" 
     {{ $attributes }}
 >        
-    <input type="hidden" name="{{ $name }}" :value="selectedIcon">     
+    <input type="hidden" name="{{ $name }}" :value="selectedIcon" data-test="{{ $data_test }}">     
     <x-forms.field 
         name=""
         placeholder="Escribe para buscar..."
@@ -23,6 +24,7 @@
         @input.debounce.300ms="showIcons()"
         @focus="open = true"
         @click.away="open = false"
+        data-test="{{ $data_test }}-search"
     />
     
     <div class="flex items-center ml-2 pr-3 pointer-events-none text-secondary-content" >
@@ -31,7 +33,7 @@
         ></span>
     </div>
         
-    <ul class="dropdown-content menu p-2 shadow bg-secondary tex-secondary-content rounded-box w-full max-h-80 overflow-y-auto z-50 mt-11 border border-secondary-content" x-show="open && results.length > 0">
+    <ul id="icon-list" class="dropdown-content menu p-2 shadow bg-secondary tex-secondary-content rounded-box w-full max-h-80 overflow-y-auto z-50 mt-11 border border-secondary-content" x-show="open && results.length > 0">
         <template x-for="icon in results" :key="icon">
             <li>
                 <button 

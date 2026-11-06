@@ -2,7 +2,7 @@
     'group',
     'userGames',
 ])
-<div class=" flex flex-col flex-3 mb-10 bg-primary p-2 border border-secondary rounded-xl">
+<div class=" flex flex-col flex-3 mb-10 bg-primary p-2 border border-secondary rounded-xl" id="group-{{ $group->id }}">
     <x-list.groupheader group_id="{{ $group->id }}" groupname="{{ $group->groupname }}" color="{{ $group->color }}" icon="{{ $group->icon }}">
         {{ $group->groupname }}
     </x-list.groupheader>
