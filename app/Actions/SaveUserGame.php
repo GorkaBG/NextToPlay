@@ -35,7 +35,7 @@ class SaveUserGame
      *      platforms => id en IGDB de las plaformas seleccionadas (En el caso especial del PC, donde hay tiendas predefinidas, tiene formado "igdb_id|platform_id")
      *  @return bool: true si se ha asignado, false en caso contrario.
      */
-    public function handle(Request $request): bool
+    public function handle(Request $request)
     {
         $game = Game::where('igdb_id', $request->game)->first();
 
@@ -43,7 +43,8 @@ class SaveUserGame
             $game_data = (new IGDBService())->game($request->game);
 
             if( empty($game_data) || ! isset($game_data[0]['id']) || !is_int($game_data[0]['id']))
-                return false;//game() ha fallado
+                //return false;//game() ha fallado
+                return ["error","Ocurrió un problema"];
 
             $duration = $this->getGameDuration($game_data[0]['name']);
 
@@ -69,15 +70,20 @@ class SaveUserGame
             $gameUser = DB::transaction(function () use($request, $game) { 
                 $gameUser = $this->storeGameUser($game->id, $request->group);
 
-                if( ! empty($request->platforms))
+                if( ! empty($request->platforms) && !empty($gameUser ) )
                     $this->storeGameUserPlatforms($gameUser, $request->platforms);
                 
                 return $gameUser;
             });
+        }else{
+            return ["error","El juego ya está en uno de los grupos"];
         }
 
-        return ! empty($gameUser);
-        
+        if (! empty($gameUser) ){
+            return ["success", "Juego añadido al listado"];
+        }else{
+            return ["error", "Ocurrió un error"];
+        }
 
     }
 
@@ -132,7 +138,12 @@ class SaveUserGame
         return $image_path;
     }
 
-    private function getGameDuration($name)
+    /**
+     * Reliza una búsqueda un HLTB utilizando el servicio contruido a tal efecto, que obtiene el mejor resultado
+     * @param string $name: texto de la búsqueda (nombre del juego de IGDB)
+     * @return array: devuelve un array, vacío si no encuentra nada o con los valores de las 3 duraciones (Main, Main + Extra y Completionist)
+     */
+    private function getGameDuration(String $name): Array
     {
         $data = [];
         $hltb = new HLTBService();

@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'igdb' => [
+        'client_id' => env('IGDB_CLIENT'),
+        'client_secret' => env('IGDB_SECRET'),
+    ],
+
 ];

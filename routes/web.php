@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function(){
      * Acciones de juegos del usuario
      */
     Route::post('/games/new', [GameUserController::class, 'store'])->name('games.store');
-    Route::post('/games/{gameUser}/toggle-finished', [GameUserController::class, 'toggleFinished'])->name('games.toggle.finished');
+    Route::patch('/games/{gameUser}/toggle-finished', [GameUserController::class, 'toggleFinished'])->name('games.toggle.finished');
     Route::patch('/games/{gameUser}/update', [GameUserController::class, 'update'])->name('games.update');
     Route::delete('/games/{gameUser}/delete', [GameUserController::class, 'destroy'])->name('games.delete');
 

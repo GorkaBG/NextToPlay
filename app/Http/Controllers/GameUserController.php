@@ -41,16 +41,23 @@ class GameUserController extends Controller
             'game' => ['required', 'integer', 'max_digits:6'],
             'group' => ['required', 'integer', 'max_digits:2'],
             'platforms' => ['array'],
+        ], [
+            'game.required' => 'Debes seleccionar un juego de la lista',
+            'game.integer' => 'Debes seleccionar un juego de la lista',
+            'game.max_digits' => 'Debes seleccionar un juego de la lista',
+            'group.required' => 'Añade el juego a uno de tus grupos',
+            'group.integer' => 'Añade el juego a uno de tus grupos',
+            'group.max_digits' => 'Añade el juego a uno de tus grupos',
+            'platforms.array' => 'Selecciona las plataformas donde posees el juego',
         ]);
 
         if( Gate::denies('workWith', GameGroup::find($request->group)) ){
             return back()->with('error', 'No tienes permiso para hacer esto');
         } 
     
-        if( (new SaveUserGame)->handle($request) ) 
-            return to_route('games.list')->with('success', 'Juego añadido al listado');
-        else
-            return to_route('games.list')->with('error', 'Ocurrió un problema');
+        $response = (new SaveUserGame)->handle($request);
+        return to_route('games.list')->with($response[0], $response[1]);
+        //return to_route('games.list')->with('success', 'Juego añadido al listado');
     }
 
     
@@ -63,6 +70,11 @@ class GameUserController extends Controller
             'name' => ['string', 'min:5','max:255'],
             'finished' => ['sometimes', 'accepted'],
             'platforms' => ['array'],
+        ], [
+            'name.min' => 'El nombre personalizado del juego debe tener al menos 5 caracteres',
+            'name.max' => 'El nombre personalizado del juego no debe tener más de 255 caracteres',
+            'finished' => 'Selecciona el estado del juego',
+            'platforms.array' => 'Selecciona las plataformas donde posees el juego',
         ]);
         
         if( Gate::denies('workWith', $gameUser) ){
@@ -96,9 +108,8 @@ class GameUserController extends Controller
      */
     public function toggleFinished(GameUser $gameUser): RedirectResponse
     {
-        //hacer esto con politica  
-        if($gameUser->user_id != Auth::id()){
-            return to_route('games.list')->with('error', 'Ocurrió un error');        
+        if( Gate::denies('workWith', GameGroup::find($gameUser->game_group_id)) ){
+            return back()->with('error', 'No tienes permiso para hacer esto');
         }
 
         $gameUser->update([
@@ -124,7 +135,6 @@ class GameUserController extends Controller
             'position' => ['required','integer','max_digits:3'],            
         ]);
 
-        //hacer esto con politica                
         if( Gate::denies('workWith', GameGroup::find($request->group_id)) ){
             return back()->with('error', 'No tienes permiso para hacer esto');
         } 

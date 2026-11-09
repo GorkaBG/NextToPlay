@@ -2,6 +2,8 @@
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\GameGroup;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +46,47 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+
+/**
+ * Genera 3 grupos y 4 juegos (1 + 2 +1) para los test sin tener que repetir todo el código
+ * @param User $user: Usuario conectado
+ * @return $groups: devuelve el id de los grupos creados
+ */
+function rellenarTablero(User $user)
 {
-    // ..
+    $groups = [];
+    $groups[] = GameGroup::factory()->for($user)->create()->id;
+    $groups[] = GameGroup::factory()->for($user)->create()->id;
+    $groups[] = GameGroup::factory()->for($user)->create()->id;
+
+    test()->post(route('games.store'), [
+        'game' => 37777,//Shadow of the Tomb Raider
+        'group' => $groups[0],
+        'platforms' => [48,'6|1'],
+    ])->assertSessionHas(['success' => 'Juego añadido al listado']);
+
+    test()->post(route('games.store'), [
+        'game' => 1877,//Cyberpunk 2077
+        'group' => $groups[1],
+        'platforms' => ['6|3'],
+    ])->assertSessionHas(['success' => 'Juego añadido al listado']);
+
+    test()->post(route('games.store'), [
+        'game' => 7334,//Bloodborne
+        'group' => $groups[1],
+        'platforms' => [48],
+    ])->assertSessionHas(['success' => 'Juego añadido al listado']);
+
+    test()->post(route('games.store'), [
+        'game' => 119388,//Zelda: Tears of the Kingdom
+        'group' => $groups[2],
+        'platforms' => [130],
+    ])->assertSessionHas(['success' => 'Juego añadido al listado']);
+
+    test()->assertDatabaseHas('games',[ 'igdb_id' => 37777 ]);
+    test()->assertDatabaseHas('games',[ 'igdb_id' => 1877 ]);
+    test()->assertDatabaseHas('games',[ 'igdb_id' => 7334 ]);
+    test()->assertDatabaseHas('games',[ 'igdb_id' => 119388 ]);
+
+    return $groups;
 }

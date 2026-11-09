@@ -71,7 +71,7 @@
         <div 
             @mousedown="$el.closest('li').setAttribute('draggable', 'true')"
             @mouseup.window="$el.closest('li').setAttribute('draggable', 'false')"
-            class="flex w-[6%] space-x-0 content-center ">        
+            class="flex w-[6%] space-x-0 content-center cursor-move dragpoint">        
             <x-icon name="mdi-drag-vertical" class="size-5" class="text-secondary-content"/>
         </div>
 
@@ -140,7 +140,8 @@
             >
                 <li>
                     <form action="{{ route ('games.toggle.finished', $id)}}" method="POST" class="block w-full p-0">
-                        @csrf                        
+                        @csrf
+                        @method('PATCH')                     
                         <button type="submit" class="flex w-full gap-2 text-sm items-center p-1 rounded-lg cursor-pointer hover:text-primary-content" data-test="finalizar-juego-{{ $id }}">
                         @if ($finished)
                             <x-icon name="mdi-checkbox-blank-circle-outline" class="size-4"/> Quitar finalizado

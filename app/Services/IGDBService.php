@@ -4,32 +4,58 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class IGDBService
 {
-    private string $token;
+    private ?string $token;
 
     public function __construct()
-    {
-        $this->token = (( session('access_token') /* y no ha expirado */ )? $token = session('access_token') : $this->access_token() );
+    {          
+        $this->token = Cache::get('igdb_access_token');
+
+        if( ! $this->token){
+            $this->token = $this->get_access_token();
+        }        
     }
 
-    private function access_token()
+    private function get_access_token()
     {
-        $response = Http::withHeaders([
-            'client_id' => env('IGDB_CLIENT'),
-            'client_secret' => env('IGDB_SECRET'),
+        $response = Http::post('https://id.twitch.tv/oauth2/token', [
+            'client_id' => config('services.igdb.client_id'),
+            'client_secret' => config('services.igdb.client_secret'),
             'grant_type' => 'client_credentials',
-        ])
-        ->post('https://id.twitch.tv/oauth2/token?client_id='.env('IGDB_CLIENT').'&client_secret='.env('IGDB_SECRET').'&grant_type=client_credentials');
+        ]);
 
-       
-        if($response->successful()){
-            session( ['access_token' => $response->json('access_token')] );
-            session( ['access_token_expires' =>$response->json('expires_in')] ); 
-            return $response->json('access_token');
+        $response->throw();
+        $token = $response->json('access_token');
+        $expires = $response->json('expires_in');
+
+        Cache::put(
+            'igdb_access_token', 
+            $this->token, 
+            now()->addSeconds( $expires - 60) 
+        );
+
+        return $token;
+    }
+
+    private function igdb_request(array $headers, string $body){
+        $response = Http::withHeaders($headers)
+        ->withBody($body, 'text/plain')
+        ->post('https://api.igdb.com/v4/games');
+
+        if ($response->status() === 401) { // Renueva el token y repite si IGDB lo ha anulado
+            $this->token = $this->get_access_token();
+
+            $response = Http::withHeaders($headers)
+            ->withBody($body, 'text/plain')
+            ->post('https://api.igdb.com/v4/games');
         }
 
+        $response->throw();
+
+        return $response;
     }
 
     public function search(String $search)/*: ?JsonResponse*/
@@ -59,10 +85,8 @@ class IGDBService
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ];
-        $response = Http::withHeaders($headers)
-        ->withBody($body, 'text/plain')
-        ->post('https://api.igdb.com/v4/games');
-        
+
+        $response = $this->igdb_request($headers, $body);
         
         return $response->successful() ? $response->json() : [];
 
@@ -99,10 +123,8 @@ class IGDBService
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ];
-        $response = Http::withHeaders($headers)
-        ->withBody($body, 'text/plain')
-        ->post('https://api.igdb.com/v4/games');
         
+        $response = $this->igdb_request($headers, $body);
         
         return $response->successful() ? $response->json() : [];
 
@@ -128,9 +150,8 @@ class IGDBService
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ];
-        $response = Http::withHeaders($headers)
-        ->withBody($body, 'text/plain')
-        ->post('https://api.igdb.com/v4/games');
+        
+        $response = $this->igdb_request($headers, $body);
         
         return $response->successful() ? $response->json() : [];
     }

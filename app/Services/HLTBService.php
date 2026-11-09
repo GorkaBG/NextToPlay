@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\Http;
 
 class HLTBService
 {
+    /**
+     * Obtiene un token de HTLB
+     * 
+     * @return string: devuelve el token obtenido
+     */
     public function getToken()
     {
         $timestamp = (int) (microtime(true) * 1000);
@@ -19,6 +24,14 @@ class HLTBService
         return $response->json('token');
     }
 
+    /**
+     * Realiza una busqueda en How Long to Beat utilizando sus propios endpoints y una función para filtrar los resultados y obtener el mejor.
+     * 
+     * @param string $name: texto de la búsqueda (nombre parcial del juego)
+     * @param string $token: el token de HLTB obtenido previamente
+     * 
+     * @return ?array: Devuelve un array con los datos del juego exacto
+     */
     public function searchGame(string $name, string $token): ?Array
     {
         $response = Http::withHeaders([
@@ -58,8 +71,6 @@ class HLTBService
         if ($response->failed()) {
             return null;
         }
-
-        ;
 
         return $this->getExactGame($name, $response->json('data'));
     }

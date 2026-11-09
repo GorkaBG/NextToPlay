@@ -53,6 +53,7 @@
                         {{ ((Illuminate\Support\Facades\Auth::user()->theme ==='dark')?'checked':'') }}
                         class="toggle text-primary-content" autocomplete="off"
                         @change="$el.form.submit()"
+                        data-test="btn-toggle-theme"
                         />
                     <x-icon name="heroicon-s-moon" class="size-5" />   
                 </form>  
