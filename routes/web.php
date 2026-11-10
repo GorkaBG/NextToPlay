@@ -6,6 +6,17 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\GameGroupController;
 use App\Http\Controllers\GameUserController;
 
+use Illuminate\Support\Facades\DB;
+
+Route::get('/test-db', function () {
+    try {
+        DB::connection()->getPdo();
+        return "Conecta a la base de datos " . DB::connection()->getDatabaseName();
+    } catch (\Exception $e) {
+        return "Error de conexión: " . $e->getMessage();
+    }
+});
+
 /**
  * Rutas de acceso para el login, en las que se solicita el email y el código. Para prevenir abusos, se permiten 3 solicitudes de código y 5 intentos de verificación por minuto antes de mostrar el error de peticiones excedidas.
  */
