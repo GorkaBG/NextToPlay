@@ -6,15 +6,15 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\GameGroupController;
 use App\Http\Controllers\GameUserController;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
-Route::get('/test-db', function () {
+Route::get('/run-migrations', function () {
     try {
-        DB::connection()->getPdo();
-        return "Conecta a la base de datos " . DB::connection()->getDatabaseName();
+        Artisan::call('migrate', ['--force' => true]);
+        return "¡Migraciones ejecutadas con éxito! <br><pre>" . Artisan::output() . "</pre>";
     } catch (\Exception $e) {
-        return "Error de conexión: " . $e->getMessage();
-    } 
+        return "Error al migrar: " . $e->getMessage();
+    }
 });
 
 /**
