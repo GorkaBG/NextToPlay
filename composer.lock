@@ -4,59 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "06291dc37b601cf94a937299214073b5",
+    "content-hash": "7ed4f28473cfc3b1c99be8908c4ecf8a",
     "packages": [
-        {
-            "name": "aneeskhan47/php-howlongtobeat-api",
-            "version": "v1.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/aneeskhan47/php-howlongtobeat-api.git",
-                "reference": "30e82a2eddb3397be50dec0c6bc7cc51de3bc1e9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/aneeskhan47/php-howlongtobeat-api/zipball/30e82a2eddb3397be50dec0c6bc7cc51de3bc1e9",
-                "reference": "30e82a2eddb3397be50dec0c6bc7cc51de3bc1e9",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "php": "^7.4 || ^8.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.0|^10.0|^11.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "AneesKhan47\\HowLongToBeat\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Anees Khan",
-                    "email": "kingkhan2388@gmail.com"
-                }
-            ],
-            "description": "A PHP API wrapper for HowLongToBeat.com",
-            "support": {
-                "issues": "https://github.com/aneeskhan47/php-howlongtobeat-api/issues",
-                "source": "https://github.com/aneeskhan47/php-howlongtobeat-api/tree/v1.0.4"
-            },
-            "funding": [
-                {
-                    "url": "https://www.paypal.com/paypalme/aneeskhan47",
-                    "type": "custom"
-                }
-            ],
-            "time": "2026-05-25T11:21:29+00:00"
-        },
         {
             "name": "blade-ui-kit/blade-heroicons",
             "version": "2.7.0",
