@@ -14,7 +14,7 @@ Route::get('/test-db', function () {
         return "Conecta a la base de datos " . DB::connection()->getDatabaseName();
     } catch (\Exception $e) {
         return "Error de conexión: " . $e->getMessage();
-    }
+    } 
 });
 
 /**
