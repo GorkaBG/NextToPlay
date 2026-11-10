@@ -77,7 +77,7 @@
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="flex text-sm text-primary-content items-center gap-2">
+                            <button type="submit" class="flex text-sm cursor-pointer text-primary-content items-center gap-2">
                                 <x-icon name="mdi-power" class="size-4"/> Cerrar sesión
                             </button>
                         </form>

@@ -24,7 +24,7 @@ return new class extends Migration
             ['name' => 'Steam', 'igdb_id' => '6', 'icon' => 'si-steam'],
             ['name' => 'Epic', 'igdb_id' => '6', 'icon' => 'si-epicgames'],
             ['name' => 'GOG', 'igdb_id' => '6', 'icon' => 'si-gogdotcom'],
-            ['name' => 'Xbox Game Pass', 'igdb_id' => '6', 'icon' => ''],
+            ['name' => 'Xbox Game Pass', 'igdb_id' => '6', 'icon' => 'ico-10-gamepass'],
             ['name' => 'CD / DVD', 'igdb_id' => '6', 'icon' => 'mdi-microsoft-windows'],
             ['name' => 'Battle.net', 'igdb_id' => '6', 'icon' => 'si-battledotnet'],
             ['name' => 'GeForce Now', 'igdb_id' => '6', 'icon' => 'si-nvidia'],
@@ -45,7 +45,7 @@ return new class extends Migration
             ['name' => 'PS Vita', 'igdb_id' => '46', 'icon' => 'si-playstationvita'],
 
             ['name' => 'Switch', 'igdb_id' => '130', 'icon' => 'mdi-nintendo-switch'],
-            ['name' => 'Switch 2', 'igdb_id' => '508', 'icon' => ''],
+            ['name' => 'Switch 2', 'igdb_id' => '508', 'icon' => 'ico-05-switch2'],
             ['name' => 'Wii', 'igdb_id' => '5', 'icon' => 'mdi-nintendo-wii'],
             ['name' => 'Wii U', 'igdb_id' => '41', 'icon' => 'nintendo-wiiu'],
             ['name' => '3DS', 'igdb_id' => '37', 'icon' => ''],

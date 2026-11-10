@@ -11,7 +11,7 @@ class IGDBService
     private ?string $token;
 
     public function __construct()
-    {          
+    { 
         $this->token = Cache::get('igdb_access_token');
 
         if( ! $this->token){
@@ -30,10 +30,10 @@ class IGDBService
         $response->throw();
         $token = $response->json('access_token');
         $expires = $response->json('expires_in');
-
+        
         Cache::put(
             'igdb_access_token', 
-            $this->token, 
+            $token, 
             now()->addSeconds( $expires - 60) 
         );
 
@@ -81,13 +81,13 @@ class IGDBService
                 limit 9;';
 
         $headers = [
-            'Client-ID' => env('IGDB_CLIENT'),
+            'Client-ID' => config('services.igdb.client_id'),
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ];
 
         $response = $this->igdb_request($headers, $body);
-        
+
         return $response->successful() ? $response->json() : [];
 
     }
@@ -119,7 +119,7 @@ class IGDBService
                 limit 9;';
 
         $headers = [
-            'Client-ID' => env('IGDB_CLIENT'),
+            'Client-ID' => config('services.igdb.client_id'),
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ];
@@ -146,7 +146,7 @@ class IGDBService
                 ';
 
         $headers = [
-            'Client-ID' => env('IGDB_CLIENT'),
+            'Client-ID' => config('services.igdb.client_id'),
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ];

@@ -2,7 +2,7 @@
 
 
     @if ($groups->count() === 0)
-        <div class="flex flex-col mt-15 w-full  max-w-xl text-center justify-center text-primary-content ">
+        <div class="flex flex-col p-2 mt-15 w-full  max-w-xl text-center justify-center text-primary-content ">
             <p>¡Para comenzar crea tu primer grupo de juegos! De esta forma podrás agruparlos según te convenga.</p>    
         
             <a 

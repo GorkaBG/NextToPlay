@@ -1,4 +1,4 @@
-@props(['titulo' => 'Next To Play: Decide rápidamente tu siguiente juego'])
+@props(['titulo' => 'NextToPlay: Decide rápidamente tu siguiente juego'])
 <!DOCTYPE html>
 <html lang="es" data-theme="{{ 
     ( (auth()->check())? ((auth()->user()->theme ==='dark')?'moon':'sun') : 'moon' ) }}">

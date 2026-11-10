@@ -19,7 +19,7 @@
     "
     class="flex fixed inset-0 z-50  items-center justify-center bg-base-100/70 backdrop-blur-[2px]" 
 >
-    <div class="flex flex-col p-2 min-w-2xl bg-secondary rounded-lg">
+    <div class="flex flex-col p-2 w-96 sm:w-2xl bg-secondary rounded-lg">
 
         <x-icon name="mdi-close" class="size-7 ml-auto cursor-pointer text-primary-content" @click="show = false;$dispatch('close-modal')" />
         <div class="w-full pt-4 p-6">
