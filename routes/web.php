@@ -7,20 +7,6 @@ use App\Http\Controllers\GameGroupController;
 use App\Http\Controllers\GameUserController;
 use Illuminate\Support\Facades\Storage;
 
-Route::get('/debug-storage', function () {
-    $disk = Storage::disk('wasmer_persistent');
-    $path = 'covers/test.txt';
-    $disk->put($path, 'prueba de persistencia');
-    
-
-    return [
-        'path_absoluta' => $disk->path($path),
-        'existe' => $disk->exists($path),
-        'url' => $disk->url($path),
-        'env_actual' => env('APP_ENV')
-    ];
-});
-
 /**
  * Rutas de acceso para el login, en las que se solicita el email y el código. Para prevenir abusos, se permiten 3 solicitudes de código y 5 intentos de verificación por minuto antes de mostrar el error de peticiones excedidas.
  */
@@ -82,9 +68,9 @@ Route::middleware('auth')->group(function(){
 
     /** Rutas para wasmer, donde no funciona el enlace simbólico */
     Route::get('/media/{path}', function (string $path) {
-        if (!Storage::disk('wasmer_persistent')->exists($path)) {
+        if (!Storage::disk('public')->exists($path)) {
             abort(404);
         }
-        return Storage::disk('wasmer_persistent')->response($path);
+        return Storage::disk('public')->response($path);
     })->where('path', '.*')->name('media.show');
 });

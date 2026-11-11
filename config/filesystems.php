@@ -47,14 +47,6 @@ return [
             'report' => false,
         ],
 
-        'wasmer_persistent' => [
-            'driver' => 'local',
-            'root' => env('STORAGE_PATH', storage_path('app/public')),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/media',
-            'visibility' => 'public',
-            'throw' => false,
-        ],
-
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
