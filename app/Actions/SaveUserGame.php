@@ -127,8 +127,7 @@ class SaveUserGame
         $image_path = "";
         if( ! empty($imageId) ){
             $image = $imageId.'.jpg';
-            $response = Http::get( 'https://images.igdb.com/igdb/image/upload/t_cover_big/'.$image );
-            
+            $response = Http::get( 'https://images.igdb.com/igdb/image/upload/t_cover_big/'.$image );            
             if($response->successful()){                    
                 if( Storage::disk('public')->put('covers/'.$image, $response->body()) ){
                     $image_path = 'covers/'.$image;
