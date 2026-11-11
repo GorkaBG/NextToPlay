@@ -7,6 +7,19 @@ use App\Http\Controllers\GameGroupController;
 use App\Http\Controllers\GameUserController;
 use Illuminate\Support\Facades\Storage;
 
+Route::get('/debug-storage', function () {
+    $disk = Storage::disk('public');
+    $path = 'covers/test.txt';
+    $disk->put($path, 'prueba de persistencia');
+    
+    return [
+        'path_absoluta' => $disk->path($path),
+        'existe' => $disk->exists($path),
+        'url' => $disk->url($path),
+        'env_actual' => env('APP_ENV')
+    ];
+});
+
 /**
  * Rutas de acceso para el login, en las que se solicita el email y el código. Para prevenir abusos, se permiten 3 solicitudes de código y 5 intentos de verificación por minuto antes de mostrar el error de peticiones excedidas.
  */
