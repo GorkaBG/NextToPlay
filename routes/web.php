@@ -8,7 +8,7 @@ use App\Http\Controllers\GameUserController;
 use Illuminate\Support\Facades\Storage;
 
 Route::get('/debug-storage', function () {
-    $disk = Storage::disk('public');
+    $disk = Storage::disk('wasmer_persistent');
     $path = 'covers/test.txt';
     $disk->put($path, 'prueba de persistencia');
     
@@ -81,9 +81,9 @@ Route::middleware('auth')->group(function(){
 
     /** Rutas para wasmer, donde no funciona el enlace simbólico */
     Route::get('/media/{path}', function (string $path) {
-        if (!Storage::disk('public')->exists($path)) {
+        if (!Storage::disk('wasmer_persistent')->exists($path)) {
             abort(404);
         }
-        return Storage::disk('public')->response($path);
+        return Storage::disk('wasmer_persistent')->response($path);
     })->where('path', '.*')->name('media.show');
 });
