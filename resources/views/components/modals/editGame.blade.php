@@ -38,7 +38,7 @@
                 <div class="flex w-[6%] space-x-0 content-center "></div>
 
                 <div class="flex w-[19%] items-center roundex-lg overflow-hidden">            
-                    <img :src="'/media/'+cover" :alt="gameName" x-show="typeof cover !== 'undefined'&& cover.length > 0" class="w-full max-w-100 rounded-box">            
+                    <img :src="'/storage/'+cover" :alt="gameName" x-show="typeof cover !== 'undefined'&& cover.length > 0" class="w-full max-w-100 rounded-box">            
                 </div>
                 <div class="flex flex-col w-[70%] justify-between text-left py-3 px-3">
                     <div 

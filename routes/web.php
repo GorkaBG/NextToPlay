@@ -65,12 +65,4 @@ Route::middleware('auth')->group(function(){
      * Acciones de usuario
      */
     Route::post('/user/theme', [UserController::class, 'toggleTheme'])->name('toggle.theme');
-
-    /** Rutas para wasmer, donde no funciona el enlace simbólico */
-    Route::get('/media/{path}', function (string $path) {
-        if (!Storage::disk('public')->exists($path)) {
-            abort(404);
-        }
-        return Storage::disk('public')->response($path);
-    })->where('path', '.*')->name('media.show');
 });
