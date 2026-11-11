@@ -1,0 +1,7 @@
+kind: wasmer.io/App.v0
+name: nexttoplay
+owner: gorkabg
+package: .
+volumes:
+  - name: data
+    mount: /data

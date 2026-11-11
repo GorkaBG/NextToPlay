@@ -12,12 +12,21 @@ Route::get('/debug-storage', function () {
     $path = 'covers/test.txt';
     $disk->put($path, 'prueba de persistencia');
     
-    
+
     return [
         'path_absoluta' => $disk->path($path),
         'existe' => $disk->exists($path),
         'url' => $disk->url($path),
         'env_actual' => env('APP_ENV')
+    ];
+});
+
+Route::get('/debug-list', function () {
+    $disk = Storage::disk('wasmer_persistent');
+    
+    return [
+        'ficheros_en_covers' => $disk->allFiles('covers'),
+        'espacio_disco' => disk_total_space('/data'),
     ];
 });
 

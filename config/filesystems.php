@@ -50,7 +50,7 @@ return [
         'wasmer_persistent' => [
             'driver' => 'local',
             'root' => '/data',
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/media',
             'visibility' => 'public',
             'throw' => false,
         ],
