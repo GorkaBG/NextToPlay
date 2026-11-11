@@ -6,6 +6,19 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\GameGroupController;
 use App\Http\Controllers\GameUserController;
 
+/** Pruebas Wasmer */
+use Illuminate\Support\Facades\Storage;
+Route::get('/test-write', function () {
+    Storage::disk('public')->put('test.txt', 'Hola mundo desde Wasmer');
+    return "Archivo de prueba escrito con éxito.";
+});
+Route::get('/media/{path}', function (string $path) {
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+    return Storage::disk('public')->response($path);
+})->where('path', '.*')->name('media.show');
+
 /**
  * Rutas de acceso para el login, en las que se solicita el email y el código. Para prevenir abusos, se permiten 3 solicitudes de código y 5 intentos de verificación por minuto antes de mostrar el error de peticiones excedidas.
  */

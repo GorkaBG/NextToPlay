@@ -133,6 +133,8 @@ class SaveUserGame
                 if( Storage::disk('public')->put('covers/'.$image, $response->body()) ){
                     $image_path = 'covers/'.$image;
                 }
+            }else {
+                \Log::error("Fallo al descargar imagen externa: " . $response->status());
             }
         }
         return $image_path;
