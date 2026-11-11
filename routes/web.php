@@ -12,6 +12,7 @@ Route::get('/debug-storage', function () {
     $path = 'covers/test.txt';
     $disk->put($path, 'prueba de persistencia');
     
+    
     return [
         'path_absoluta' => $disk->path($path),
         'existe' => $disk->exists($path),
