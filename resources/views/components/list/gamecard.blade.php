@@ -54,7 +54,7 @@
         }
     "    
     class="gamecard mb-2 rounded-xl  {{ (($finished)?'opacity-50 ':'')}}" 
-    style="background-image: url( {{ (( ! empty($cover))? route('media.show', $cover) /*asset('storage') .'/'. $cover*/ : '/images/NextToPlay.webp') }} ); background-position: center;background-size:cover;"
+    style="background-image: url( {{ (( ! empty($cover))? asset('storage') .'/'. $cover : '/images/NextToPlay.webp') }} ); background-position: center;background-size:cover;"
 >
     <div class="flex rounded-xl border border-secondary shadow-md h-[120px] py-2 px-1 bg-gradient w-full" style="background: 
     linear-gradient(

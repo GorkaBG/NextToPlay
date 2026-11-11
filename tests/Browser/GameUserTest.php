@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use App\Models\GameGroup;
-/*
+
 it('Añadir un juego', function(){
     $user = User::factory()->create();
     $this->actingAs( $user );
@@ -32,7 +32,7 @@ it('Añadir un juego', function(){
     expect( $user->userGames()->first()->game_group_id )->toBe($group->id);
 
 });
-*/
+
 
 it('Añadir varios juegos en distintos grupo', function(){
     $user = User::factory()->create();
@@ -91,7 +91,7 @@ it('Añadir varios juegos en distintos grupo', function(){
             [$gameName1, $gameName2, $gameName3, $gameName4]
         );
 });
-/*
+
 it('Intentar añadir un juego que ya está',function(){
     $user = User::factory()->create();
     $this->actingAs( $user );
@@ -372,4 +372,3 @@ it('Intentar eliminar un juego de la lista de otro usuario', function(){
     ]);            
 });
 
-*/
