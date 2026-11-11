@@ -6,7 +6,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\GameGroupController;
 use App\Http\Controllers\GameUserController;
 
-/** Pruebas Wasmer */
+/** Pruebas Wasmer  */
 use Illuminate\Support\Facades\Storage;
 Route::get('/test-write', function () {
     Storage::disk('public')->put('test.txt', 'Hola mundo desde Wasmer');
