@@ -49,7 +49,7 @@ return [
 
         'wasmer_persistent' => [
             'driver' => 'local',
-            'root' => env('WASMER_STORAGE_PATH', storage_path('app/public')),
+            'root' => env('STORAGE_PATH', storage_path('app/public')),
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/media',
             'visibility' => 'public',
             'throw' => false,
