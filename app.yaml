@@ -1,7 +1,0 @@
-kind: wasmer.io/App.v0
-name: nexttoplay
-owner: gorkabg
-package: .
-volumes:
-  - name: covers
-    mount: /app/storage/app/public
