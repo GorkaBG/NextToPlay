@@ -77,7 +77,7 @@
 
         <div class="flex w-[19%] items-center {{ (($finished)?'grayscale ':'')}} roundex-lg overflow-hidden">
             @if( ! empty($cover))
-            <img src="{{ route('media.show', $cover) }}{{-- asset('storage') .'/'. $cover --}}" alt="{{ $name }}" 
+            <img src="{{-- route('media.show', $cover) --}}{{ asset('storage') .'/'. $cover }}" alt="{{ $name }}" 
     draggable="false" class="w-full max-w-100 rounded-box">
             @endif
         </div>

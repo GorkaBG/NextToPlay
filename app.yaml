@@ -4,4 +4,4 @@ owner: gorkabg
 package: .
 volumes:
   - name: data
-    mount: /data
+    mount: /app/public/storage
