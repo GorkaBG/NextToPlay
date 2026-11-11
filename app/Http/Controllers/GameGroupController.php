@@ -148,15 +148,17 @@ class GameGroupController extends Controller
                     }
                 }
                 unset($files);//liberación de memoria. $files con miles archivos pega duro.
+                if( count($allIcons) > 35 ){ //si se superan los 35 iconos (dejando margen para algún posible repetido), costa el bucle para no seguir buscando algo que se borrará
+                    break 2;
+                }
             }
         }
 
         // Ordenamos alfabéticamente y eliminamos posibles duplicados
         $allIcons = array_unique($allIcons);
         sort($allIcons);
-        // Limitamos el resultado a 42 para que queden bien en el cuadro
-        return response()->json(array_slice($allIcons, 0, 42));
-
+        // Limitamos el resultado a 30 para que queden bien en el cuadro
+        return response()->json(array_slice($allIcons, 0, 30));
     }    
 
     /**

@@ -1,4 +1,4 @@
-<svg version="1.1" id="nintendo-switch-2" viewBox="0 0 400 350"  xmlns="http://www.w3.org/2000/svg" fill="currentColor" {{ $attributes(['class' => ""]) }}> 
+<svg version="1.1" id="Xbox Game Pass" viewBox="0 0 400 350"  xmlns="http://www.w3.org/2000/svg" fill="currentColor" {{ $attributes(['class' => ""]) }}> 
 <!--G-->   
 <path d="
 M1.000000,33.458069 

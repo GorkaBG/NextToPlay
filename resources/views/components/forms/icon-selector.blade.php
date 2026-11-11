@@ -33,7 +33,7 @@
         ></span>
     </div>
         
-    <ul id="icon-list" class="dropdown-content menu p-2 shadow bg-secondary tex-secondary-content rounded-box w-full max-h-80 overflow-y-auto z-50 mt-11 border border-secondary-content" x-show="open && results.length > 0">
+    <ul id="icon-list" class="dropdown-content menu p-2 shadow bg-secondary tex-secondary-content rounded-box w-full max-h-55 overflow-y-auto z-50 mt-11 border border-secondary-content" x-show="open && results.length > 0">
         <template x-for="icon in results" :key="icon">
             <li>
                 <button 
