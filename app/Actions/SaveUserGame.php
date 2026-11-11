@@ -130,7 +130,8 @@ class SaveUserGame
             $response = Http::get( 'https://images.igdb.com/igdb/image/upload/t_cover_big/'.$image );
             
             if($response->successful()){                    
-                if( Storage::disk('public')->put('covers/'.$image, $response->body()) ){
+                /*if( Storage::disk('public')->put('covers/'.$image, $response->body()) ){*/
+                if( Storage::disk('wasmer_persistent')->put('covers/'.$image, $response->body()) ){
                     $image_path = 'covers/'.$image;
                 }
             }else {

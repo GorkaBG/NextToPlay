@@ -40,11 +40,19 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => '/data',
+            'root' => storage_path('app/public'),
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+        ],
+
+        'wasmer_persistent' => [
+            'driver' => 'local',
+            'root' => '/data',
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
         ],
 
         's3' => [
