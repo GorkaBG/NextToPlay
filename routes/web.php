@@ -66,7 +66,7 @@ Route::middleware('auth')->group(function(){
      */
     Route::post('/user/theme', [UserController::class, 'toggleTheme'])->name('toggle.theme');
 
-    /** W */
+    /** Rutas para wasmer, donde no funciona el enlace simbólico */
     Route::get('/media/{path}', function (string $path) {
     if (!Storage::disk('public')->exists($path)) {
         abort(404);
