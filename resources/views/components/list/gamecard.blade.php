@@ -65,9 +65,8 @@
         color-mix(in srgb, var(--color-secondary) 92%, transparent) 80%,
         color-mix(in srgb, var(--color-secondary) 97%, transparent) 95%,
         var(--color-secondary) 100%
-    );
-
-    ">
+    );"
+    >
         <div 
             @mousedown="$el.closest('li').setAttribute('draggable', 'true')"
             @mouseup.window="$el.closest('li').setAttribute('draggable', 'false')"
@@ -83,7 +82,6 @@
         </div>
         <div class="flex flex-col w-[53%] justify-between text-left py-3 px-3">
             <div class="title text-primary-content font-bold text-base/5 line-clamp-3">{{ $name }}</div>
-
             <div class="text-xs uppercase font-semibold opacity-60 text-secondary-content">
             @foreach($developers as $i=>$developer)
                     {{ (($i>0)?' | ':'').$developer['name'] }}            
