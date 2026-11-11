@@ -21,15 +21,6 @@ Route::get('/debug-storage', function () {
     ];
 });
 
-Route::get('/debug-list', function () {
-    $disk = Storage::disk('wasmer_persistent');
-    
-    return [
-        'ficheros_en_covers' => $disk->allFiles('covers'),
-        'espacio_disco' => disk_total_space('/data'),
-    ];
-});
-
 /**
  * Rutas de acceso para el login, en las que se solicita el email y el código. Para prevenir abusos, se permiten 3 solicitudes de código y 5 intentos de verificación por minuto antes de mostrar el error de peticiones excedidas.
  */
