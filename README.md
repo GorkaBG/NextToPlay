@@ -11,7 +11,7 @@
 
 Su objetivo es ayudarte a organizar tus juegos pendientes y reducir las opciones entre las que elegir, para que el tiempo libre que dedicas a jugar no se convierta en una tarea de planificación.
 
-<img src="./docs/images/tablero.png" width="100%" alt="Pantalla principal de NextToPlay">
+<img src="./docs/images/tablero.png" style="max-width:100%" alt="Pantalla principal de NextToPlay">
 
 ## Qué es el Análisis Parálisis
 
@@ -81,12 +81,12 @@ El acceso a la aplicación se realiza mediante correo electrónico. Basta con in
     <td align="center">
       <strong>Introduce tu email</strong>
       <br><br>
-      <img src="./docs/images/login.png" width="100%" alt="Pantalla de Login">
+      <img src="./docs/images/login.png" style="max-width:100%" alt="Pantalla de Login">
     </td>
     <td align="center">
       <strong>Introduce el código</strong>
       <br><br>
-      <img src="./docs/images/code.png" width="100%" alt="Pantalla de código de acceso">
+      <img src="./docs/images/code.png" style="max-width:100%" alt="Pantalla de código de acceso">
     </td>
   </tr>
 </table>
@@ -95,7 +95,7 @@ El acceso a la aplicación se realiza mediante correo electrónico. Basta con in
 
 Una vez iniciada la sesión, el usuario puede crear grupos nuevos pulsando sobre el botón "Crear Grupo" en la cabecera de la aplicación. Un usuario nuevo debe añadir un grupo antes de cualquier juego, en este caso también verá un botón para hacerlo en el centro de la pantalla.
 
-<img src="./docs/images/nuevo-grupo.png" width="100%" alt="Pantalla de código de acceso">
+<img src="./docs/images/nuevo-grupo.png" style="max-width:100%" alt="Pantalla de código de acceso">
 
 La creación de grupos consta de tres campos, dos de ellos obligatorios:
 
@@ -113,11 +113,11 @@ El proceso se divide en 2 partes:
 
 1. Introduce el texto de búsqueda en el campo. La aplicación consultará el catálogo de IGDB y se mostrarán las 10 mejores coincidencias. Al pulsar sobre el deseado se seleccionará y se mostrarán las plataformas y launchers en los que está disponible.
 
-<img src="./docs/images/búsqueda-juego.png" width="100%" alt="Pantalla de añadir juego">
+<img src="./docs/images/búsqueda-juego.png" style="max-width:100%" alt="Pantalla de añadir juego">
 
 2. Se seleccionan la(s) plataforma(s) en la(s) que se posee el juego. Esta parte es opcional, se permite no seleccionar ninguna plataforma. Esto es útil, por ejemplo, para juegos pendientes de compra en los que no se sepa dónde se adquirirá.
 
-<img src="./docs/images/plataformas-juego.png" width="100%" alt="Pantalla de añadir juego - Seleccionar plataformas y tiendas">
+<img src="./docs/images/plataformas-juego.png" style="max-width:100%" alt="Pantalla de añadir juego - Seleccionar plataformas y tiendas">
 
 Finalmente, al pulsar guardar el tablero se recargará con el nuevo juego añadido.
 
@@ -140,15 +140,15 @@ En la parte derecha de cada juego aparece el icono ⋮. Al pulsar sobre él se d
 
 La aplicación utiliza un tablero de tipo kanban, lo que significa que las tarjetas de los juegos pueden moverse en su grupo para cambiar su orden y moverse entre grupos. 
 
-Para hacerlo, el usuario debe pulsar sobre el icono <svg fill="#333333" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z"></path></svg> en la tarjeta del juego que desea mover y, manteniendo el botón del ratón presionado, arrastrarlo a la posición en la que desee colocarlo.
+Para hacerlo, el usuario debe pulsar sobre el icono ⦙⦙ en la tarjeta del juego que desea mover y, manteniendo el botón del ratón presionado, arrastrarlo a la posición en la que desee colocarlo.
 
-<img src="./docs/images/arrastrar-juego.png" width="100%" alt="Arrastrar juego en el tablero kanban">
+<img src="./docs/images/arrastrar-juego.png" style="max-width:100%" alt="Arrastrar juego en el tablero kanban">
 
 ### Cambiar tema noche/día
 
 En la cabecera de la aplicación se encuentra el interruptor que permite cambiar entre los temas oscuro y claro con solo pulsar en él
 
-<img src="./docs/images/cambiar-tema.png" width="100%" alt="Botón para cambiar tema">
+<img src="./docs/images/cambiar-tema.png" style="max-width:100%" alt="Botón para cambiar tema">
 
 ## Tecnologías utilizadas
 
