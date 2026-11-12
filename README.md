@@ -11,6 +11,8 @@
 
 Su objetivo es ayudarte a organizar tus juegos pendientes y reducir las opciones entre las que elegir, para que el tiempo libre que dedicas a jugar no se convierta en una tarea de planificación.
 
+Puede verse en funcionamiento en un servidor gratuito (y lento) de Wasmer: [https://nexttoplay.wasmer.app/](https://nexttoplay.wasmer.app/)
+
 <img src="./docs/images/tablero.png" style="max-width:100%" alt="Pantalla principal de NextToPlay">
 
 ## Qué es el Análisis Parálisis
